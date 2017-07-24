@@ -1,6 +1,6 @@
 <?php
 
-namespace Brackets\Admin\MediaLibrary\Exceptions\FileCannotBeAdded;
+namespace Brackets\Media\Exceptions\FileCannotBeAdded;
 
 use Spatie\MediaLibrary\Helpers\File;
 use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded;

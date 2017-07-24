@@ -1,6 +1,6 @@
 <?php
 
-namespace Brackets\Admin\MediaLibrary\HasMedia;
+namespace Brackets\Media\HasMedia;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\File;
@@ -11,8 +11,8 @@ use Spatie\MediaLibrary\Media as MediaModel;
 
 use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded;
 use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\MimeTypeNotAllowed;
-use Brackets\Admin\MediaLibrary\Exceptions\FileCannotBeAdded\FileIsTooBig;
-use Brackets\Admin\MediaLibrary\Exceptions\FileCannotBeAdded\TooManyFiles;
+use Brackets\Media\Exceptions\FileCannotBeAdded\FileIsTooBig;
+use Brackets\Media\Exceptions\FileCannotBeAdded\TooManyFiles;
 
 trait HasMediaCollectionsTrait {
 
@@ -141,8 +141,8 @@ trait HasMediaCollectionsTrait {
         $this->registerMediaCollections();
     }
 
-    public function addMediaCollection($name) : \Brackets\Admin\MediaLibrary\HasMedia\Collection {
-        $collection = \Brackets\Admin\MediaLibrary\HasMedia\Collection::create($name);
+    public function addMediaCollection($name) : \Brackets\Media\HasMedia\Collection {
+        $collection = \Brackets\Media\HasMedia\Collection::create($name);
 
         $this->mediaCollections->push($collection);
 

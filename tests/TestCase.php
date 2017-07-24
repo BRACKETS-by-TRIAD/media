@@ -1,6 +1,6 @@
 <?php
 
-namespace Brackets\Admin\MediaLibrary\Test;
+namespace Brackets\Media\Test;
 
 use File;
 use Illuminate\Database\Schema\Blueprint;
@@ -9,10 +9,10 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 abstract class TestCase extends Orchestra
 {
-    /** @var \Brackets\Admin\MediaLibrary\Test\TestModel */
+    /** @var \Brackets\Media\Test\TestModel */
     protected $testModel;
 
-    /** @var \Brackets\Admin\MediaLibrary\Test\TestModelWithCollections */
+    /** @var \Brackets\Media\Test\TestModelWithCollections */
     protected $testModelWithCollections;
 
     public function setUp()
@@ -35,7 +35,7 @@ abstract class TestCase extends Orchestra
     {
         return [
             \Spatie\MediaLibrary\MediaLibraryServiceProvider::class,
-            \Brackets\Admin\AdminProvider::class
+            \Brackets\Media\MediaProvider::class
         ];
     }
 
@@ -81,7 +81,7 @@ abstract class TestCase extends Orchestra
             'default_protected_disk' => 'media-protected'
         ]);
 
-        $app['config']->set('medialibrary.custom_url_generator_class', \Brackets\Admin\MediaLibrary\LocalUrlGenerator::class);
+        $app['config']->set('medialibrary.custom_url_generator_class', \Brackets\Media\LocalUrlGenerator::class);
 
         $app->bind('path.public', function () {
             return $this->getTempDirectory();

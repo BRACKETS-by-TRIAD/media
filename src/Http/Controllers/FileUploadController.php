@@ -1,6 +1,6 @@
 <?php
 
-namespace Brackets\Admin\MediaLibrary\Http\Controllers;
+namespace Brackets\Media\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Brackets\Simpleweb\Http\Middleware\Admin;

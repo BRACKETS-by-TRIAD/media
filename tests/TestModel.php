@@ -1,13 +1,13 @@
 <?php
 
-namespace Brackets\Admin\MediaLibrary\Test;
+namespace Brackets\Media\Test;
 
 use Illuminate\Database\Eloquent\Model;
 // use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 // use Spatie\MediaLibrary\HasMedia\Interfaces\HasMediaConversions;
 
-use Brackets\Admin\MediaLibrary\HasMedia\HasMediaCollections;
-use Brackets\Admin\MediaLibrary\HasMedia\HasMediaCollectionsTrait;
+use Brackets\Media\HasMedia\HasMediaCollections;
+use Brackets\Media\HasMedia\HasMediaCollectionsTrait;
 use Spatie\MediaLibrary\HasMedia\Interfaces\HasMediaConversions;
 
 class TestModel extends Model implements HasMediaConversions, HasMediaCollections

@@ -1,5 +1,5 @@
 {
-    "name": "brackets/admin",
+    "name": "brackets/media",
     "description": "Admin (CRUD) interface built on Laravel 5",
     "keywords": ["simpleweb", "crud", "admin", "administration"],
     "license": "MIT",
@@ -30,7 +30,12 @@
     "autoload": {
         "classmap": [],
         "psr-4": {
-            "Brackets\\Admin\\": "src/"
+            "Brackets\\Media\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Brackets\\Media\\Test\\": "tests"
         }
     }
 }

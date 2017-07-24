@@ -1,6 +1,6 @@
 <?php
 
-namespace Brackets\Admin\MediaLibrary\Http\Controllers;
+namespace Brackets\Media\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Bus\DispatchesJobs;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Brackets\Admin\MediaLibrary\Test;
+namespace Brackets\Media\Test;
 
 class TestModelWithCollections extends TestModel
 {

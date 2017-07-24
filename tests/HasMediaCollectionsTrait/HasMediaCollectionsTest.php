@@ -1,15 +1,15 @@
 <?php
 
-namespace Brackets\Admin\MediaLibrary\Test\HasMediaTrait;
+namespace Brackets\Media\Test\HasMediaTrait;
 
-use Brackets\Admin\MediaLibrary\Test\TestCase;
+use Brackets\Media\Test\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Http\Request;
 
 use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded;
 use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\MimeTypeNotAllowed;
-use Brackets\Admin\MediaLibrary\Exceptions\FileCannotBeAdded\FileIsTooBig;
-use Brackets\Admin\MediaLibrary\Exceptions\FileCannotBeAdded\TooManyFiles;
+use Brackets\Media\Exceptions\FileCannotBeAdded\FileIsTooBig;
+use Brackets\Media\Exceptions\FileCannotBeAdded\TooManyFiles;
 
 class HasMediaCollectionsTest extends TestCase
 {
@@ -57,13 +57,13 @@ class HasMediaCollectionsTest extends TestCase
                 [
                     'collection' => 'documents',
                     'name'       => 'test',
-                    'model'      => 'Brackets\Admin\MediaLibrary\Test\TestModel',
+                    'model'      => 'Brackets\Media\Test\TestModel',
                     'path'       => 'test.pdf'
                 ],
                 [
                     'collection' => 'documents',
                     'name'       => 'test',
-                    'model'      => 'Brackets\Admin\MediaLibrary\Test\TestModel',
+                    'model'      => 'Brackets\Media\Test\TestModel',
                     'path'       => 'test.docx'
                 ]
             ]
@@ -91,7 +91,7 @@ class HasMediaCollectionsTest extends TestCase
                 [
                     'collection' => 'documents',
                     'name'       => 'test',
-                    'model'      => 'Brackets\Admin\MediaLibrary\Test\TestModel',
+                    'model'      => 'Brackets\Media\Test\TestModel',
                     'path'       => 'test.psd'
                 ]
             ]
@@ -115,7 +115,7 @@ class HasMediaCollectionsTest extends TestCase
                 [
                     'collection' => 'documents',
                     'name'       => 'test',
-                    'model'      => 'Brackets\Admin\MediaLibrary\Test\TestModel',
+                    'model'      => 'Brackets\Media\Test\TestModel',
                     'path'       => 'test.pdf'
                 ]
             ]
@@ -142,19 +142,19 @@ class HasMediaCollectionsTest extends TestCase
                 [
                     'collection' => 'documents',
                     'name'       => 'test',
-                    'model'      => 'Brackets\Admin\MediaLibrary\Test\TestModel',
+                    'model'      => 'Brackets\Media\Test\TestModel',
                     'path'       => 'test.psd'
                 ],
                 [
                     'collection' => 'documents',
                     'name'       => 'test',
-                    'model'      => 'Brackets\Admin\MediaLibrary\Test\TestModel',
+                    'model'      => 'Brackets\Media\Test\TestModel',
                     'path'       => 'test.txt'
                 ],
                 [
                     'collection' => 'documents',
                     'name'       => 'test',
-                    'model'      => 'Brackets\Admin\MediaLibrary\Test\TestModel',
+                    'model'      => 'Brackets\Media\Test\TestModel',
                     'path'       => 'test.docx'
                 ]
             ]
@@ -181,13 +181,13 @@ class HasMediaCollectionsTest extends TestCase
                 [
                     'collection' => 'documents',
                     'name'       => 'test',
-                    'model'      => 'Brackets\Admin\MediaLibrary\Test\TestModel',
+                    'model'      => 'Brackets\Media\Test\TestModel',
                     'path'       => 'test.psd'
                 ],
                 [
                     'collection' => 'documents',
                     'name'       => 'test',
-                    'model'      => 'Brackets\Admin\MediaLibrary\Test\TestModel',
+                    'model'      => 'Brackets\Media\Test\TestModel',
                     'path'       => 'test.txt'
                 ]
             ]
@@ -207,7 +207,7 @@ class HasMediaCollectionsTest extends TestCase
                 [
                     'collection' => 'documents',
                     'name'       => 'test',
-                    'model'      => 'Brackets\Admin\MediaLibrary\Test\TestModel',
+                    'model'      => 'Brackets\Media\Test\TestModel',
                     'path'       => 'test.docx'
                 ],
             ]
@@ -232,13 +232,13 @@ class HasMediaCollectionsTest extends TestCase
                 [
                     'collection' => 'documents',
                     'name'       => 'test',
-                    'model'      => 'Brackets\Admin\MediaLibrary\Test\TestModel',
+                    'model'      => 'Brackets\Media\Test\TestModel',
                     'path'       => 'test.psd'
                 ],
                  [
                     'collection' => 'documents',
                     'name'       => 'test',
-                    'model'      => 'Brackets\Admin\MediaLibrary\Test\TestModel',
+                    'model'      => 'Brackets\Media\Test\TestModel',
                     'path'       => 'test.docx'
                 ]
             ]
@@ -266,7 +266,7 @@ class HasMediaCollectionsTest extends TestCase
                 [
                     'collection' => 'documents',
                     'name'       => 'test',
-                    'model'      => 'Brackets\Admin\MediaLibrary\Test\TestModel',
+                    'model'      => 'Brackets\Media\Test\TestModel',
                     'path'       => 'test.psd'
                 ]
             ]
@@ -292,7 +292,7 @@ class HasMediaCollectionsTest extends TestCase
                 [
                     'collection' => 'documents',
                     'name'       => 'test',
-                    'model'      => 'Brackets\Admin\MediaLibrary\Test\TestModel',
+                    'model'      => 'Brackets\Media\Test\TestModel',
                     'path'       => 'test.txt'
                 ]
             ]
@@ -315,7 +315,7 @@ class HasMediaCollectionsTest extends TestCase
                     'name'       => 'test',
                     'width'      => 200,
                     'height'     => 200,
-                    'model'      => 'Brackets\Admin\MediaLibrary\Test\TestModelWithCollections',
+                    'model'      => 'Brackets\Media\Test\TestModelWithCollections',
                     'path'       => 'test.jpg'
                 ]
             ]
@@ -346,7 +346,7 @@ class HasMediaCollectionsTest extends TestCase
                     'name'       => 'test',
                     'width'      => 200,
                     'height'     => 200,
-                    'model'      => 'Brackets\Admin\MediaLibrary\Test\TestModelWithCollections',
+                    'model'      => 'Brackets\Media\Test\TestModelWithCollections',
                     'path'       => 'test.pdf'
                 ]
             ]

@@ -1,6 +1,6 @@
 <?php
 
-namespace Brackets\Admin\MediaLibrary\HasMedia;
+namespace Brackets\Media\HasMedia;
 
 use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
 

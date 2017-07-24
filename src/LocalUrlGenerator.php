@@ -1,6 +1,6 @@
 <?php
 
-namespace Brackets\Admin\MediaLibrary;
+namespace Brackets\Media;
 
 use Spatie\MediaLibrary\UrlGenerator\LocalUrlGenerator as SpatieLocalUrlGenerator;
 
