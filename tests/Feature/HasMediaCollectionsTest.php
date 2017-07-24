@@ -1,6 +1,4 @@
-<?php
-
-namespace Brackets\Media\Test\HasMediaTrait;
+<?php namespace Brackets\Media\Test\Feature;
 
 use Brackets\Media\Test\TestCase;
 use Illuminate\Http\UploadedFile;
