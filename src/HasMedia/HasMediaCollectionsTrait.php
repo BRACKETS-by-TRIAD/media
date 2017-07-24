@@ -21,6 +21,9 @@ trait HasMediaCollectionsTrait {
     /** @var  Collection */
     protected $mediaCollections;
 
+    /** @var bool */
+    public $autoProcessMedia = true;
+
     public function processMedia(Collection $files) {
         //FIXME: check no. of db queries on average request
         $mediaCollections = $this->getMediaCollections();
