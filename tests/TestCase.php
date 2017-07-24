@@ -53,11 +53,13 @@ abstract class TestCase extends Orchestra
             'prefix' => '',
         ]);
 
+        // FIXME these config setting needs to have a look
         $app['config']->set('filesystems.disks.media', [
             'driver' => 'local',
             'root' => $this->getMediaDirectory(),
         ]);
 
+        // FIXME these config setting needs to have a look
         $app['config']->set('filesystems.disks.media-protected', [
             'driver' => 'local',
              'root' => $this->getMediaDirectory('storage'),
@@ -70,10 +72,12 @@ abstract class TestCase extends Orchestra
 
         $app['config']->set('medialibrary.custom_url_generator_class', \Brackets\Media\LocalUrlGenerator::class);
 
+        // FIXME these config setting needs to have a look
         $app->bind('path.public', function () {
             return $this->getTempDirectory();
         });
 
+        // FIXME these config setting needs to have a look
         $app->bind('path.storage', function () {
             return $this->getTempDirectory();
         });
@@ -99,6 +103,7 @@ abstract class TestCase extends Orchestra
         (new \CreateMediaTable())->up();
     }
 
+    // FIXME what is this method for?
     protected function setUpTempTestFiles()
     {
         $this->initializeDirectory($this->getTestFilesDirectory());
@@ -120,11 +125,11 @@ abstract class TestCase extends Orchestra
 
     public function getMediaDirectory($suffix = '')
     {
-        return $this->getTempDirectory().'/media'.($suffix == '' ? '' : '/'.$suffix);
+        return $this->getTempDirectory('media').($suffix == '' ? '' : '/'.$suffix);
     }
 
     public function getTestFilesDirectory($suffix = '')
     {
-        return $this->getTempDirectory().'/app'.($suffix == '' ? '' : '/'.$suffix);
+        return $this->getTempDirectory('app').($suffix == '' ? '' : '/'.$suffix);
     }
 }

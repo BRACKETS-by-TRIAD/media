@@ -325,7 +325,7 @@ class HasMediaCollectionsTest extends TestCase
         $response = $this->call('GET', $media->first()->getUrl());
 
         // TODO assert
-        // $response->assertStatus(200); // FIXME this returns 404
+//        $response->assertStatus(200); // FIXME this returns 404
     }
 
     /** @test */
@@ -354,7 +354,7 @@ class HasMediaCollectionsTest extends TestCase
         $this->assertCount(1, $media);
 
         $response = $this->call('GET', $media->first()->getUrl());
-        
+
         $response->assertStatus(403);
     }
 
@@ -362,6 +362,7 @@ class HasMediaCollectionsTest extends TestCase
         return Request::create('test', 'GET', $data);        
     }
 
+    // FIXME no usage of this method
     private function getRequestWithFile($data) { 
         $file = new UploadedFile($data['path'], $data['name'], 'image/jpeg', filesize($data['path']), null, true);
         return Request::create('test', 'GET', $data, [], [$file], [], []);        
