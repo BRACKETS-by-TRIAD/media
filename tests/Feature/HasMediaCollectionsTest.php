@@ -4,7 +4,6 @@ use Brackets\Media\Test\TestCase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Http\Request;
 
-use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded;
 use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\MimeTypeNotAllowed;
 use Brackets\Media\Exceptions\FileCannotBeAdded\FileIsTooBig;
 use Brackets\Media\Exceptions\FileCannotBeAdded\TooManyFiles;
