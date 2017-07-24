@@ -1,0 +1,36 @@
+{
+    "name": "brackets/admin",
+    "description": "Admin (CRUD) interface built on Laravel 5",
+    "keywords": ["simpleweb", "crud", "admin", "administration"],
+    "license": "MIT",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Pavol Perdík",
+            "email": "palypster@gmail.com",
+            "homepage": "https://www.brackets.sk/en",
+            "role": "Developer"
+        },
+        {
+            "name": "David Běhal",
+            "email": "behal.david@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.6.4",
+        "illuminate/support": "5.4.*",
+        "dimsav/laravel-translatable": "7.*",
+        "spatie/laravel-medialibrary": "^5.0.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.2",
+        "orchestra/testbench": "^3.4"
+    },
+    "autoload": {
+        "classmap": [],
+        "psr-4": {
+            "Brackets\\Admin\\": "src/"
+        }
+    }
+}
