@@ -53,26 +53,13 @@ abstract class TestCase extends Orchestra
             'prefix' => '',
         ]);
 
-        // $app['config']->set('filesystems.disks.media', [
-        //     'driver' => 'local',
-        //     'root' => $this->getMediaDirectory(),
-        // ]);
-
-        // $app['config']->set('filesystems.disks.secondMediaDisk', [
-        //     'driver' => 'local',
-        //     'root' => $this->getTempDirectory('media2'),
-        // ]);
-
-
         $app['config']->set('filesystems.disks.media', [
             'driver' => 'local',
-            // 'root' => public_path().'/media',
             'root' => $this->getMediaDirectory(),
         ]);
 
         $app['config']->set('filesystems.disks.media-protected', [
             'driver' => 'local',
-            // 'root' => storage_path().'/app/media',
              'root' => $this->getMediaDirectory('storage'),
         ]);
 

@@ -10,8 +10,8 @@
          processIsolation="false"
          stopOnFailure="false">
     <testsuites>
-        <testsuite name="Spatie Test Suite">
-            <directory>src/MediaLibrary/test</directory>
+        <testsuite name="Brackets Media Test Suite">
+            <directory>tests</directory>
         </testsuite>
     </testsuites>
     <filter>
