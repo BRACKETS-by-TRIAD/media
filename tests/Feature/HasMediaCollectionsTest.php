@@ -25,20 +25,20 @@ class HasMediaCollectionsTest extends TestCase
 
     /** @test */
     public function check_media_collections_count()
-    {   
-        $this->assertCount(0, $this->testModel->getMediaCollections()); 
-        $this->assertCount(2, $this->testModelWithCollections->getMediaCollections()); 
+    {
+        $this->assertCount(0, $this->testModel->getMediaCollections());
+        $this->assertCount(2, $this->testModelWithCollections->getMediaCollections());
     }
 
     /** @test */
     public function check_image_media_collections_count () {
-        $this->assertCount(0, $this->testModel->getImageMediaCollections()); 
-        $this->assertCount(1, $this->testModelWithCollections->getImageMediaCollections()); 
+        $this->assertCount(0, $this->testModel->getImageMediaCollections());
+        $this->assertCount(1, $this->testModelWithCollections->getImageMediaCollections());
     }
 
     /** @test */
     public function user_can_register_new_file_collection_and_upload_files()
-    {   
+    {
         $this->testModel->addMediaCollection('documents')
                         ->title('Documents');
 
@@ -134,7 +134,7 @@ class HasMediaCollectionsTest extends TestCase
         $this->expectException(TooManyFiles::class);
 
         $this->testModel->addMediaCollection('documents')
-                        ->title('Documents')             
+                        ->title('Documents')
                         ->maxNumberOfFiles(2);
 
         $request = $this->getRequest([
@@ -171,7 +171,7 @@ class HasMediaCollectionsTest extends TestCase
         $this->expectException(TooManyFiles::class);
 
         $this->testModel->addMediaCollection('documents')
-                        ->title('Documents')             
+                        ->title('Documents')
                         ->maxNumberOfFiles(2);
 
         $request = $this->getRequest([
@@ -197,7 +197,7 @@ class HasMediaCollectionsTest extends TestCase
         $this->assertCount(0, $this->testModel->getMediaCollections());
 
         $this->testModel->addMediaCollection('documents')
-                        ->title('Documents')             
+                        ->title('Documents')
                         ->maxNumberOfFiles(2);
 
         $request2 = $this->getRequest([
@@ -222,7 +222,7 @@ class HasMediaCollectionsTest extends TestCase
     /** @test */ // FIXME this one is redundant, we already tested that in previous test, I think we can totally delete this one
     public function user_can_upload_exact_number_of_defined_files() {
         $this->testModel->addMediaCollection('documents')
-                        ->title('Documents')             
+                        ->title('Documents')
                         ->maxNumberOfFiles(2);
 
         $request = $this->getRequest([
@@ -267,7 +267,7 @@ class HasMediaCollectionsTest extends TestCase
                 ]
             ]
         ]);
-        
+
         $this->testModel->processMedia(collect($request->get('files')));
         $this->testModel = $this->testModel->fresh();
 
@@ -290,7 +290,7 @@ class HasMediaCollectionsTest extends TestCase
                 ]
             ]
         ]);
-        
+
         $this->testModel->processMedia(collect($request->get('files')));
         $this->testModel = $this->testModel->fresh();
 
@@ -324,8 +324,10 @@ class HasMediaCollectionsTest extends TestCase
 
         $response = $this->call('GET', $media->first()->getUrl());
 
-        // TODO assert
-//        $response->assertStatus(200); // FIXME this returns 404
+        // let's assert that the access was not forbidden (but as long as we don't have a real nginx serving the file, we cannot actually get the file
+        $this->assertNotEquals(403, $response->getStatusCode());
+        // that's why we at least check if the final URL is correct
+        // TODO
     }
 
     /** @test */
@@ -362,9 +364,4 @@ class HasMediaCollectionsTest extends TestCase
         return Request::create('test', 'GET', $data);        
     }
 
-    // FIXME no usage of this method
-    private function getRequestWithFile($data) { 
-        $file = new UploadedFile($data['path'], $data['name'], 'image/jpeg', filesize($data['path']), null, true);
-        return Request::create('test', 'GET', $data, [], [$file], [], []);        
-    }
 }
