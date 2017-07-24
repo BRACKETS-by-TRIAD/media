@@ -122,6 +122,12 @@ trait HasMediaCollectionsTrait {
         }
     }
 
+    protected function bootIfNotBooted() {
+        parent::bootIfNotBooted();
+
+        $this->initMediaCollections();
+    }
+
     public static function bootHasMediaCollectionsTrait() {
         static::saving(function($model) {
             if($model->autoProcessMedia) {
@@ -149,10 +155,6 @@ trait HasMediaCollectionsTrait {
     }
 
     public function getMediaCollections() {
-        if (is_null($this->mediaCollections)) {
-            $this->initMediaCollections();
-        }
-
         return $this->mediaCollections;
     }
 

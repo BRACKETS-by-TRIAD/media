@@ -40,9 +40,6 @@ class HasMediaCollectionsTest extends TestCase
     /** @test */
     public function user_can_register_new_file_collection_and_upload_files()
     {   
-        //FIXME: calling getMediaCollections() is required to init MediaCollections
-        $this->assertCount(0, $this->testModel->getMediaCollections());
-
         //user_can_register_new_file_collection
         $this->testModel->addMediaCollection('documents')
                         ->title('Documents');
@@ -77,9 +74,6 @@ class HasMediaCollectionsTest extends TestCase
     public function user_cant_upload_not_allowed_file_types() {
         $this->expectException(MimeTypeNotAllowed::class);
 
-        //FIXME: calling getMediaCollections() is required to init MediaCollections
-        $this->assertCount(0, $this->testModel->getMediaCollections());
-        
         $this->testModel->addMediaCollection('documents')
                         ->title('Documents')
                         ->accepts('application/pdf, application/msword');
@@ -101,9 +95,6 @@ class HasMediaCollectionsTest extends TestCase
     }
 
      public function user_can_upload_allowed_file_types() {
-        //FIXME: calling getMediaCollections() is required to init MediaCollections
-        $this->assertCount(0, $this->testModel->getMediaCollections());
-        
         $this->testModel->addMediaCollection('documents')
                         ->title('Documents')
                         ->accepts('application/pdf, application/msword');
@@ -127,9 +118,6 @@ class HasMediaCollectionsTest extends TestCase
     /** @test */
     public function user_cant_upload_more_files_than_is_allowed() {
         $this->expectException(TooManyFiles::class);
-
-        //FIXME: calling getMediaCollections() is required to init MediaCollections
-        $this->assertCount(0, $this->testModel->getMediaCollections());
 
         $this->testModel->addMediaCollection('documents')
                         ->title('Documents')             
@@ -166,9 +154,6 @@ class HasMediaCollectionsTest extends TestCase
     /** @test */
     public function user_cant_upload_more_files_than_is_allowed_2() {
         $this->expectException(TooManyFiles::class);
-
-        //FIXME: calling getMediaCollections() is required to init MediaCollections
-        $this->assertCount(0, $this->testModel->getMediaCollections());
 
         $this->testModel->addMediaCollection('documents')
                         ->title('Documents')             
@@ -218,9 +203,6 @@ class HasMediaCollectionsTest extends TestCase
 
     /** @test */
     public function user_can_upload_exact_number_of_defined_files() {
-        //FIXME: calling getMediaCollections() is required to init MediaCollections
-        $this->assertCount(0, $this->testModel->getMediaCollections());
-
         $this->testModel->addMediaCollection('documents')
                         ->title('Documents')             
                         ->maxNumberOfFiles(2);
@@ -251,9 +233,6 @@ class HasMediaCollectionsTest extends TestCase
     public function user_cant_upload_files_exceeding_max_file_size() {
         $this->expectException(FileIsTooBig::class);
 
-        //FIXME: calling getMediaCollections() is required to init MediaCollections
-        $this->assertCount(0, $this->testModel->getMediaCollections());
-
         $this->testModel->addMediaCollection('documents')
                         ->title('Documents')
                         ->maxFilesize(100*1024); //100kb
@@ -277,9 +256,6 @@ class HasMediaCollectionsTest extends TestCase
 
     /** @test */
     public function user_can_upload_files_in_max_file_size() {
-        //FIXME: calling getMediaCollections() is required to init MediaCollections
-        $this->assertCount(0, $this->testModel->getMediaCollections());
-
         $this->testModel->addMediaCollection('documents')
                         ->title('Documents')
                         ->maxFilesize(1*1024); //1kb
