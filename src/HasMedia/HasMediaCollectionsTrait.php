@@ -32,10 +32,7 @@ trait HasMediaCollectionsTrait {
                 return $collection->name == $file['collection'];
             })->first();
 
-            if($collection) {
-
-                $this->validateSizeAndTypeOfFile(storage_path('app/'.$file['path']), $collection);
-                
+            if($collection) {                
                 if(isset($file['id']) && $file['id']) {
                     if(isset($file['deleted']) && $file['deleted']) {
                         if($medium = app(MediaModel::class)->find($file['id'])) {
@@ -63,6 +60,8 @@ trait HasMediaCollectionsTrait {
                     if(isset($file['height'])) {
                         $metaData['height'] = $file['height'];
                     }
+
+                    $this->validateSizeAndTypeOfFile(storage_path('app/'.$file['path']), $collection);
 
                     //FIXME: upload path from config?
                     $this->addMedia(storage_path('app/'.$file['path']))
