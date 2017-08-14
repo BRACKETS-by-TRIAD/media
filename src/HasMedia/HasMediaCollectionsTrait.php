@@ -22,7 +22,8 @@ trait HasMediaCollectionsTrait {
     protected $mediaCollections;
 
     /** @var bool */
-    public $autoProcessMedia = true;
+    //FIXME: this should be set on model, not in trait
+    // public $autoProcessMedia = true;
 
     public function processMedia(Collection $files) {
         //FIXME: check no. of db queries on average request
