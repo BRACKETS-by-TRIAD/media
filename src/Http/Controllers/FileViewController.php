@@ -19,10 +19,7 @@ class FileViewController extends BaseController {
      use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
 	public function __construct() {
-        // First, check user's permissions - ability to perform this request
-        // if(config('simpleweb-medialibrary.authorizeView')) {
-        //     $this->authorize('medialibrary.view');  
-        // }
+
     }
 
     public function view(Request $request) {

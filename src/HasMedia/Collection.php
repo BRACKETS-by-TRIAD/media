@@ -35,7 +35,7 @@ class Collection  {
 
     public function __construct(string $name) {
         $this->name = $name;
-        $this->disk = config('simpleweb-medialibrary.default_public_disk', 'media');
+        $this->disk = config('media-collections.public_disk', 'media');
     }
 
     public function __get($property) {

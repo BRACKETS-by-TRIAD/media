@@ -67,7 +67,7 @@ abstract class TestCase extends Orchestra
              'root' => $this->getMediaDirectory('storage'),
         ]);
 
-        $app['config']->set('simpleweb-medialibrary', [
+        $app['config']->set('media-collections', [
             'public_disk' => 'media',
             'private_disk' => 'media-private'
         ]);
