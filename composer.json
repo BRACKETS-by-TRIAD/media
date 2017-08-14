@@ -15,12 +15,16 @@
             "name": "David Běhal",
             "email": "behal.david@gmail.com",
             "role": "Developer"
+        },
+        {
+            "name": "Marek Kratochvíla",
+            "email": "kratochvila.marek@gmail.com",
+            "role": "Developer"
         }
     ],
     "require": {
-        "php": ">=5.6.4",
+        "php" : "^7.0",
         "illuminate/support": "5.4.*",
-        "dimsav/laravel-translatable": "7.*",
         "spatie/laravel-medialibrary": "^5.0.0"
     },
     "require-dev": {
