@@ -21,10 +21,6 @@ trait HasMediaCollectionsTrait {
     /** @var  Collection */
     protected $mediaCollections;
 
-    /** @var bool */
-    //FIXME: this should be set on model, not in trait
-    // public $autoProcessMedia = true;
-
     public function processMedia(Collection $files) {
         //FIXME: check no. of db queries on average request
         $mediaCollections = $this->getMediaCollections();
@@ -134,7 +130,7 @@ trait HasMediaCollectionsTrait {
 
     public static function bootHasMediaCollectionsTrait() {
         static::saving(function($model) {
-            if($model->autoProcessMedia) {
+            if($model->shouldAutoProcessMedia()) {
                 $request = app(Request::class); 
 
                 if($request->has('files')) {
@@ -142,6 +138,14 @@ trait HasMediaCollectionsTrait {
                 }
             }
         });
+    }
+
+    protected function shouldAutoProcessMedia() {
+        // TODO implement this method. Inspire by some Laravel package.
+//        if (property_exists($this, 'autoProcessMedia') && !!$this->autoProcessMedia) {
+//
+//        }
+        return true;
     }
 
     protected function initMediaCollections() {
