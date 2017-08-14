@@ -19,7 +19,7 @@ class TestModelWithCollections extends TestModel
 
         $this->addMediaCollection('documents')
              ->title('Documents')
-             ->protected()
+             ->private()
              ->canView('vop.view')
              ->canUpload('vop.upload')
              ->maxNumberOfFiles(20)

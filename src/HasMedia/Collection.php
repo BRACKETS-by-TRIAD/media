@@ -106,12 +106,12 @@ class Collection  {
     }
 
     /**
-     * Alias to setting default protected disk
+     * Alias to setting default private disk
      *
      * @return $this
      */
-    public function protected() {
-        $this->disk = config('simpleweb-medialibrary.default_protected_disk');
+    public function private() {
+        $this->disk = config('media-collections.private_disk');
         return $this;
     }
 
@@ -126,7 +126,7 @@ class Collection  {
     }
 
 
-    //FIXME: format? string, array or ...$x ? 
+    //TODO: format? string, array or ...$x ? 
     public function accepts($acceptedFileTypes) {
         $this->acceptedFileTypes = $acceptedFileTypes;
         return $this;
@@ -147,8 +147,8 @@ class Collection  {
         return $this->is_image;
     }
 
-    //FIXME: metoda disk by mohla mat druhy nepovinny paramater protected, ktory len nastavi interny flag na true. Aby sme vedeli presnejsie ci ide o protected alebo nie
-    public function isProtected() {
-        return $this->disk == config('simpleweb-medialibrary.default_protected_disk');
+    //FIXME: metoda disk by mohla mat druhy nepovinny paramater private, ktory len nastavi interny flag na true. Aby sme vedeli presnejsie ci ide o private alebo nie
+    public function isPrivate() {
+        return $this->disk == config('media-collections.private_disk');
     }
 }

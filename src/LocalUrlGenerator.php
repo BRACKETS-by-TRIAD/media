@@ -7,7 +7,7 @@ use Spatie\MediaLibrary\UrlGenerator\LocalUrlGenerator as SpatieLocalUrlGenerato
 class LocalUrlGenerator extends SpatieLocalUrlGenerator {
 
     public function getUrl(): string {
-        if($this->media->disk == 'media-protected') {
+        if($this->media->disk == 'media-private') {
             $url = $this->getPathRelativeToRoot();
             return route('mediaLibrary.view', [], false) . '?path=' . $this->makeCompatibleForNonUnixHosts($url);
         } else {

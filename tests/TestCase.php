@@ -59,15 +59,17 @@ abstract class TestCase extends Orchestra
             'root' => $this->getMediaDirectory(),
         ]);
 
+
         // FIXME these config setting needs to have a look
-        $app['config']->set('filesystems.disks.media-protected', [
+        $app['config']->set('filesystems.disks.media-private', [
+
             'driver' => 'local',
              'root' => $this->getMediaDirectory('storage'),
         ]);
 
         $app['config']->set('simpleweb-medialibrary', [
-            'default_public_disk' => 'media',
-            'default_protected_disk' => 'media-protected'
+            'public_disk' => 'media',
+            'private_disk' => 'media-private'
         ]);
 
         $app['config']->set('medialibrary.custom_url_generator_class', \Brackets\Media\LocalUrlGenerator::class);

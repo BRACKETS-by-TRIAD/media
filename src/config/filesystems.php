@@ -5,7 +5,7 @@ return [
         'root'   => public_path().'/media',
     ],
 
-    'media-protected' => [
+    'media-private' => [
         'driver' => 'local',
         'root'   => storage_path().'/app/media',
     ],
