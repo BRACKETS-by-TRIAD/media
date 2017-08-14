@@ -38,10 +38,9 @@ trait HasMediaCollectionsTrait {
                         if($medium = app(MediaModel::class)->find($file['id'])) {
                             $medium->delete();
                         }
-                    }
-                    else { 
-                        //TODO: update meta data?
-                    }
+                    } /* else {
+                        TODO: update meta data?
+                    }*/
                 }
                 else {
                     $metaData = [];
@@ -96,13 +95,14 @@ trait HasMediaCollectionsTrait {
         });
     }
 
-     /**
-      * Validate uploaded files mime type and size
-      *
-      * @throws FileCannotBeAdded/MimeTypeNotAllowed 
-      * @throws FileCannotBeAdded/FileIsTooBig 
-      * 
-      */ 
+
+    /**
+     * Validate uploaded files mime type and size
+     *
+     * @throws FileCannotBeAdded/MimeTypeNotAllowed
+     * @throws FileCannotBeAdded/FileIsTooBig
+     *
+     */
     public function validateSizeAndTypeOfFile($filePath, $mediaCollection) {
         if($mediaCollection->acceptedFileTypes) {
             //throws FileCannotBeAdded/MimeTypeNotAllowed
@@ -110,15 +110,19 @@ trait HasMediaCollectionsTrait {
         }
 
         if($mediaCollection->maxFilesizeInKB) {
-            //FIXME: PR do spatie? guardAgainstInvalidMimeType bol takto pridany https://github.com/spatie/laravel-medialibrary/pull/648
-           $validation = Validator::make(
-                ['file' => new File($filePath)],
-                ['file' => 'max:'.$mediaCollection->maxFilesizeInKB]
-            );
+            $this->guardAgainstFilesizeLimit($filePath, $mediaCollection->maxFilesizeInKB, $mediaCollection->name);
+        }
+    }
 
-            if ($validation->fails()) {
-                throw FileIsTooBig::create($filePath, $mediaCollection->maxFilesize, $mediaCollection->name);
-            }
+    //FIXME: PR do spatie? guardAgainstInvalidMimeType bol takto pridany https://github.com/spatie/laravel-medialibrary/pull/648
+    protected function guardAgainstFilesizeLimit($filePath, $maxFilesize, $name) {
+        $validation = Validator::make(
+            ['file' => new File($filePath)],
+            ['file' => 'max:'.($maxFilesize*1024)]
+        );
+
+        if ($validation->fails()) {
+            throw FileIsTooBig::create($filePath, $maxFilesize, $name);
         }
     }
 
