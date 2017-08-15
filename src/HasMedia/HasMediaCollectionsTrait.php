@@ -21,6 +21,7 @@ trait HasMediaCollectionsTrait {
     /** @var  Collection */
     protected $mediaCollections;
 
+    // TODO reconsider, if we really need to work with Collection (probably yes)
     public function processMedia(Collection $files) {
         //FIXME: check no. of db queries on average request
         $mediaCollections = $this->getMediaCollections();
@@ -109,8 +110,8 @@ trait HasMediaCollectionsTrait {
             $this->guardAgainstInvalidMimeType($filePath, $mediaCollection->acceptedFileTypes);
         }
 
-        if($mediaCollection->maxFilesizeInKB) {
-            $this->guardAgainstFilesizeLimit($filePath, $mediaCollection->maxFilesizeInKB, $mediaCollection->name);
+        if($mediaCollection->maxFilesize) {
+            $this->guardAgainstFilesizeLimit($filePath, $mediaCollection->maxFilesize, $mediaCollection->name);
         }
     }
 
@@ -118,7 +119,7 @@ trait HasMediaCollectionsTrait {
     protected function guardAgainstFilesizeLimit($filePath, $maxFilesize, $name) {
         $validation = Validator::make(
             ['file' => new File($filePath)],
-            ['file' => 'max:'.($maxFilesize*1024)]
+            ['file' => 'max:'.(round($maxFilesize/1024))]
         );
 
         if ($validation->fails()) {
