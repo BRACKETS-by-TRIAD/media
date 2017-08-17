@@ -15,13 +15,11 @@ class FileUploadController extends Controller {
     }
 
     public function upload(Request $request) {
+        $this->authorize('admin.upload');
+
         if ($request->hasFile('file') && $request->has('model') && $request->has('collection')) {
             $model = app($request->get('model'));
             if($model && $collection = $model->getMediaCollection($request->get('collection'))) {
-
-                if($collection->uploadPermission) {
-                    $this->authorize($collection->uploadPermission, $model);
-                }
 
                 $path = $request->file('file')->store('medialibray_temp_uploads');
                 return response()->json(['path' => $path], 200);

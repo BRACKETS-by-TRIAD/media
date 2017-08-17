@@ -2,6 +2,7 @@
 
 namespace Brackets\Media\HasMedia;
 
+use Brackets\Media\Exceptions\Collections\ThumbsDoesNotExists;
 use Illuminate\Http\Request;
 use Illuminate\Http\File;
 use Illuminate\Support\Collection;
@@ -189,6 +190,9 @@ trait HasMediaCollectionsTrait {
         $collection = $this->getMediaCollection($collectionName);
         
         //FIXME: if image and thumb_200 doesnt exist throw exception to add thumb_200
+        if($this->hasMediaConversion('thumb_200')) {
+            throw ThumbsDoesNotExists::thumbsConversionNotFound();
+        }
 
         return $this->getMedia($collectionName)->map(function($medium) use ($collection) { 
             return [ 
