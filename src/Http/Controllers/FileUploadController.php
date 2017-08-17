@@ -2,11 +2,15 @@
 
 namespace Brackets\Media\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Brackets\Simpleweb\Http\Middleware\Admin;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
 
-class FileUploadController extends Controller {
+class FileUploadController extends BaseController {
+
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     // protected $wysiwygUploadPath;
 
@@ -17,13 +21,9 @@ class FileUploadController extends Controller {
     public function upload(Request $request) {
         $this->authorize('admin.upload');
 
-        if ($request->hasFile('file') && $request->has('model') && $request->has('collection')) {
-            $model = app($request->get('model'));
-            if($model && $collection = $model->getMediaCollection($request->get('collection'))) {
-
-                $path = $request->file('file')->store('medialibray_temp_uploads');
-                return response()->json(['path' => $path], 200);
-            }
+        if ($request->hasFile('file')) {
+            $path = $request->file('file')->store('medialibray_temp_uploads');
+            return response()->json(['path' => $path], 200);
         }
 
         return response()->json('File, model or collection is not provided', 422);

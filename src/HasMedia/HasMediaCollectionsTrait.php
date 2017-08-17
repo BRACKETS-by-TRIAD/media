@@ -6,6 +6,8 @@ use Brackets\Media\Exceptions\Collections\ThumbsDoesNotExists;
 use Illuminate\Http\Request;
 use Illuminate\Http\File;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Debug\Dumper;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait as ParentHasMediaTrait;
 use Spatie\MediaLibrary\Media as MediaModel;
@@ -24,9 +26,8 @@ trait HasMediaCollectionsTrait {
 
     // TODO reconsider, if we really need to work with Collection (probably yes)
     public function processMedia(Collection $files) {
-        //FIXME: check no. of db queries on average request
         $mediaCollections = $this->getMediaCollections();
-        
+
         $this->validateCollectionMediaCount($files);
 
         $files->each(function($file) use ($mediaCollections) {
