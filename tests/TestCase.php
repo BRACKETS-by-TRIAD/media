@@ -4,8 +4,10 @@ namespace Brackets\Media\Test;
 
 use File;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Gate;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Foundation\Auth\User;
 
 abstract class TestCase extends Orchestra
 {
@@ -67,6 +69,11 @@ abstract class TestCase extends Orchestra
              'root' => $this->getMediaDirectory('storage'),
         ]);
 
+        $app['config']->set('filesystems.disks.uploads', [
+            'driver' => 'local',
+            'root' => $this->getUploadsDirectory(),
+        ]);
+
         $app['config']->set('media-collections', [
             'public_disk' => 'media',
             'private_disk' => 'media-private'
@@ -110,6 +117,7 @@ abstract class TestCase extends Orchestra
     {
         $this->initializeDirectory($this->getTestFilesDirectory());
         File::copyDirectory(__DIR__.'/testfiles', $this->getTestFilesDirectory());
+        File::copyDirectory(__DIR__.'/testfiles', $this->getUploadsDirectory());
     }
 
     protected function initializeDirectory($directory)
@@ -130,8 +138,19 @@ abstract class TestCase extends Orchestra
         return $this->getTempDirectory('media').($suffix == '' ? '' : '/'.$suffix);
     }
 
+    public function getUploadsDirectory($suffix = '')
+    {
+        return $this->getTempDirectory('uploads').($suffix == '' ? '' : '/'.$suffix);
+    }
+
     public function getTestFilesDirectory($suffix = '')
     {
         return $this->getTempDirectory('app').($suffix == '' ? '' : '/'.$suffix);
+    }
+
+    public function disableAuthorization()
+    {
+        $this->actingAs(new User);
+        Gate::define('admin.upload', function ($user) { return true; });
     }
 }

@@ -2,5 +2,5 @@
 
 return [
     'public_disk' => 'media',
-	'private_disk' => 'media-private'
+	'private_disk' => 'media-private',
 ];

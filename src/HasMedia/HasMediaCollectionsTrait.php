@@ -8,6 +8,7 @@ use Illuminate\Http\File;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Debug\Dumper;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait as ParentHasMediaTrait;
 use Spatie\MediaLibrary\Media as MediaModel;
@@ -63,10 +64,10 @@ trait HasMediaCollectionsTrait {
                         $metaData['height'] = $file['height'];
                     }
 
-                    $this->validateSizeAndTypeOfFile(storage_path('app/'.$file['path']), $collection);
+                    $file = Storage::disk('uploads')->getDriver()->getAdapter()->applyPathPrefix($file['path']);
+                    $this->validateSizeAndTypeOfFile($file, $collection);
 
-                    //FIXME: upload path from config?
-                    $this->addMedia(storage_path('app/'.$file['path']))
+                    $this->addMedia($file)
                          ->withCustomProperties($metaData)
                          ->toMediaCollection($collection->name, $collection->disk);
                 }
