@@ -8,12 +8,9 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
-use Response;
-use Storage;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\Media as MediaModel;
-use Exception;
-
-use Illuminate\Support\Facades\Gate;
 
 class FileViewController extends BaseController {
      use AuthorizesRequests, DispatchesJobs, ValidatesRequests;

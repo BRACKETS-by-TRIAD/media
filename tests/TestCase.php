@@ -2,8 +2,8 @@
 
 namespace Brackets\Media\Test;
 
-use File;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Illuminate\Database\Eloquent\Relations\Relation;
