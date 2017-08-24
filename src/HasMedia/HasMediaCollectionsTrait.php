@@ -109,7 +109,6 @@ trait HasMediaCollectionsTrait {
      */
     public function validateSizeAndTypeOfFile($filePath, $mediaCollection) {
         if($mediaCollection->acceptedFileTypes) {
-            //throws FileCannotBeAdded/MimeTypeNotAllowed
             $this->guardAgainstInvalidMimeType($filePath, $mediaCollection->acceptedFileTypes);
         }
 

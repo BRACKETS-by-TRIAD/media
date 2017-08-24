@@ -79,7 +79,7 @@ abstract class TestCase extends Orchestra
             'private_disk' => 'media-private'
         ]);
 
-        $app['config']->set('medialibrary.custom_url_generator_class', \Brackets\Media\LocalUrlGenerator::class);
+        $app['config']->set('medialibrary.custom_url_generator_class', \Brackets\Media\UrlGenerator\LocalUrlGenerator::class);
 
         // FIXME these config setting needs to have a look
         $app->bind('path.public', function () {

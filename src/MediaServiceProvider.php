@@ -15,7 +15,7 @@ class MediaServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../install-stubs/config' => base_path('config')
+                __DIR__.'/../install-stubs/config/media-collections.php' => config_path('media-collections.php')
             ], 'config');
         }
     }
@@ -30,6 +30,10 @@ class MediaServiceProvider extends ServiceProvider
         //FIXME: lepsie by bolo keby sa to dalo publishnut do filesystems
         $this->mergeConfigFrom(
             __DIR__ . '/../config/filesystems.php', 'filesystems.disks'
+        );
+
+        $this->mergeConfigFrom(
+            __DIR__ . '/../install-stubs/config/media-collections.php', 'media-collections'
         );
     }
 }
