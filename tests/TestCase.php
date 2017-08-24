@@ -37,7 +37,7 @@ abstract class TestCase extends Orchestra
     {
         return [
             \Spatie\MediaLibrary\MediaLibraryServiceProvider::class,
-            \Brackets\Media\MediaProvider::class
+            \Brackets\Media\MediaServiceProvider::class
         ];
     }
 
