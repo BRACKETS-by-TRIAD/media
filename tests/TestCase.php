@@ -38,6 +38,16 @@ abstract class TestCase extends Orchestra
 
             return $testModel;
         });
+
+        $this->app['router']->post('/test-model-disabled/create', function(Request $request){
+            $sanitized = $request->only([
+                'name',
+            ]);
+
+            $testModel = TestModelWithCollectionsDisabledAutoProcess::create($sanitized);
+
+            return $testModel;
+        });
     }
 
     /**

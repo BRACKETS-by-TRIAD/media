@@ -72,15 +72,44 @@ class HasMediaCollectionsTest extends TestCase
     }
 
     /** @test */
-    public function model_is_saved_automatically_when_model_is_saved() {
-        // TODO
-        $this->assertTrue(true);
+    public function media_is_saved_automatically_when_model_is_saved() {
+        $response = $this->post('/test-model/create', [
+            'name' => 'Test big file',
+            'files' => [
+                [
+                    'collection' => 'documents',
+                    'name'       => 'test',
+                    'model'      => 'Brackets\Media\Test\TestModel',
+                    'path'       => 'test.pdf'
+                ],
+            ],
+        ]);
+
+        $response->assertStatus(200);
+
+        $media = $this->app['db']->connection()->table('media')->first();
+
+        $this->assertStringStartsWith('test.pdf', $media->file_name);
+        $this->assertStringStartsWith('{"name":"test"}', $media->custom_properties);
     }
 
     /** @test */
-    public function model_is_not_saved_automatically_while_model_is_saved_if_this_feature_is_disabled() {
-        // TODO
-        $this->assertTrue(true);
+    public function media_is_not_saved_automatically_while_model_is_saved_if_this_feature_is_disabled() {
+        $response = $this->post('/test-model-disabled/create', [
+            'name' => 'Test big file',
+            'files' => [
+                [
+                    'collection' => 'documents',
+                    'name'       => 'test',
+                    'model'      => 'Brackets\Media\Test\TestModel',
+                    'path'       => 'test.pdf'
+                ],
+            ],
+        ]);
+
+        $response->assertStatus(200);
+
+        $this->assertEmpty($this->app['db']->connection()->table('media')->first());
     }
 
     /** @test */
