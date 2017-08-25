@@ -25,6 +25,15 @@ class TestModelWithCollections extends TestModel
              ->maxNumberOfFiles(20)
              ->maxFilesize(2*1024*1024)
              ->accepts('application/pdf, application/msword');
+
+        $this->addMediaCollection('zip')
+            ->title('Zip')
+            ->private()
+            ->canView('vop.view')
+            ->canUpload('vop.upload')
+            ->maxNumberOfFiles(20)
+            ->maxFilesize(2*1024*1024)
+            ->accepts('application/octet-stream');
     }
 
     /**

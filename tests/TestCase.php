@@ -3,6 +3,7 @@
 namespace Brackets\Media\Test;
 
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 use Orchestra\Testbench\TestCase as Orchestra;
@@ -26,6 +27,17 @@ abstract class TestCase extends Orchestra
 
         $this->testModel = TestModel::first();
         $this->testModelWithCollections = TestModelWithCollections::first();
+
+        // let's define simple routes
+        $this->app['router']->post('/test-model/create', function(Request $request){
+            $sanitized = $request->only([
+                'name',
+            ]);
+
+            $testModel = TestModelWithCollections::create($sanitized);
+
+            return $testModel;
+        });
     }
 
     /**
@@ -116,6 +128,7 @@ abstract class TestCase extends Orchestra
     protected function setUpTempTestFiles()
     {
         $this->initializeDirectory($this->getTestFilesDirectory());
+        $this->initializeDirectory($this->getUploadsDirectory());
         File::copyDirectory(__DIR__.'/testfiles', $this->getTestFilesDirectory());
         File::copyDirectory(__DIR__.'/testfiles', $this->getUploadsDirectory());
     }

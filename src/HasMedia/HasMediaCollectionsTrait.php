@@ -138,7 +138,7 @@ trait HasMediaCollectionsTrait {
     public static function bootHasMediaCollectionsTrait() {
         static::saving(function($model) {
             if($model->shouldAutoProcessMedia()) {
-                $request = app(Request::class); 
+                $request = app(Request::class);
 
                 if($request->has('files')) {
                     $model->processMedia(collect($request->get('files')));

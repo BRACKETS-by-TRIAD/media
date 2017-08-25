@@ -1,6 +1,7 @@
 <?php namespace Brackets\Media\Test\Feature;
 
 use Brackets\Media\Test\TestCase;
+use Brackets\Media\Test\TestModelWithCollections;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Http\Request;
 
@@ -27,7 +28,7 @@ class HasMediaCollectionsTest extends TestCase
     public function check_media_collections_count()
     {
         $this->assertCount(0, $this->testModel->getMediaCollections());
-        $this->assertCount(2, $this->testModelWithCollections->getMediaCollections());
+        $this->assertCount(3, $this->testModelWithCollections->getMediaCollections());
     }
 
     /** @test */
@@ -66,7 +67,8 @@ class HasMediaCollectionsTest extends TestCase
         $this->testModel = $this->testModel->fresh();
 
         $this->assertCount(2, $this->testModel->getMedia('documents'));
-        // FIXME let's check file names, mime types or some other attribute(s) to assure that upload was successful (it's enough to include this type of assertion only in the first test)
+        $firstMedia = $this->testModel->getMedia('documents')->first();
+        $this->assertStringStartsWith('application/pdf', $firstMedia->mime_type);
     }
 
     /** @test */
@@ -358,6 +360,46 @@ class HasMediaCollectionsTest extends TestCase
         $response = $this->call('GET', $media->first()->getUrl());
 
         $response->assertStatus(403);
+    }
+
+    /** @test */
+    public function should_save_model_with_in_auto_process() {
+        $response = $this->post('/test-model/create', [
+            'name' => 'Test small file',
+            'files' => [
+                [
+                    'collection' => 'documents',
+                    'name'       => 'test',
+                    'width'      => 200,
+                    'height'     => 200,
+                    'model'      => 'Brackets\Media\Test\TestModelWithCollections',
+                    'path'       => 'test.pdf'
+                ]
+            ],
+        ]);
+
+        $response->assertStatus(200);
+
+        $this->assertDatabaseHas($this->testModelWithCollections->getTable(), [ 'id' => 2, 'name' => 'Test small file', 'width' => null ]);
+    }
+
+    /** @test */
+    public function should_not_save_model_if_media_failed_in_auto_process() {
+        $response = $this->post('/test-model/create', [
+            'name' => 'Test big file',
+            'files' => [
+                [
+                    'collection' => 'zip',
+                    'name'       => 'test',
+                    'model'      => 'Brackets\Media\Test\TestModel',
+                    'path'       => 'test.zip'
+                ]
+            ],
+        ]);
+
+        $response->assertStatus(500);
+
+        $this->assertDatabaseMissing($this->testModelWithCollections->getTable(), [ 'id' => 1, 'name' => 'Test big file', 'width' => null ]);
     }
 
     private function getRequest($data) { 
