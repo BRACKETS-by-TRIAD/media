@@ -169,7 +169,7 @@ trait HasMediaCollectionsTrait {
         return $collection;
     }
 
-    public function getMediaCollections() {
+    public function getMediaCollections() : Collection {
         return $this->mediaCollections;
     }
 
