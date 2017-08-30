@@ -30,7 +30,7 @@ class TestModel extends Model implements HasMediaConversions, HasMediaCollection
      * Register the conversions that should be performed.
      *
      */
-    public function registerMediaConversions() {
+    public function registerMediaConversions(\Spatie\MediaLibrary\Media $media = null) {
         
     }
 }

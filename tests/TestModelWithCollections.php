@@ -40,9 +40,9 @@ class TestModelWithCollections extends TestModel
      * Register the conversions that should be performed.
      *
      */
-    public function registerMediaConversions() {
+    public function registerMediaConversions(\Spatie\MediaLibrary\Media $media = null) {
         $this->registerComponentThumbs();
-        
+
         $this->addMediaConversion('thumb')
              ->width(368)
              ->height(232)

@@ -24,12 +24,12 @@
     ],
     "require": {
         "php" : "^7.0",
-        "illuminate/support": "5.4.*",
-        "spatie/laravel-medialibrary": "^5.0.0"
+        "illuminate/support": "5.5.*",
+        "spatie/laravel-medialibrary": "^6.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.7",
-        "orchestra/testbench": "^3.4"
+        "phpunit/phpunit": "^6.3",
+        "orchestra/testbench": "^3.5"
     },
     "autoload": {
         "classmap": [],
@@ -40,6 +40,13 @@
     "autoload-dev": {
         "psr-4": {
             "Brackets\\Media\\Test\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Brackets\\Media\\MediaServiceProvider"
+            ]
         }
     }
 }
