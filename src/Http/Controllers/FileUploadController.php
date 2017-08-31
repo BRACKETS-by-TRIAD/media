@@ -5,8 +5,8 @@ namespace Brackets\Media\Http\Controllers;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller as BaseController;
 
 class FileUploadController extends BaseController {
 
@@ -20,6 +20,7 @@ class FileUploadController extends BaseController {
             return response()->json(['path' => $path], 200);
         }
 
-        return response()->json('File, model or collection is not provided', 422);
+        // FIXME use trans() to generate this message
+        return response()->json('File was not provided', 422);
     }
 }

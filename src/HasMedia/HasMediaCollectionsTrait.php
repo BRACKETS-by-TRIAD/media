@@ -3,20 +3,16 @@
 namespace Brackets\Media\HasMedia;
 
 use Brackets\Media\Exceptions\Collections\ThumbsDoesNotExists;
-use Illuminate\Http\Request;
-use Illuminate\Http\File;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Debug\Dumper;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
-use Spatie\MediaLibrary\HasMedia\HasMediaTrait as ParentHasMediaTrait;
-use Spatie\MediaLibrary\Media as MediaModel;
-
-use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded;
-use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\MimeTypeNotAllowed;
 use Brackets\Media\Exceptions\FileCannotBeAdded\FileIsTooBig;
 use Brackets\Media\Exceptions\FileCannotBeAdded\TooManyFiles;
+use Illuminate\Http\File;
+use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait as ParentHasMediaTrait;
+use Spatie\MediaLibrary\Media as MediaModel;
 
 trait HasMediaCollectionsTrait {
 
@@ -31,36 +27,35 @@ trait HasMediaCollectionsTrait {
 
         $this->validateCollectionMediaCount($files);
 
-        $files->each(function($file) use ($mediaCollections) {
-            $collection = $mediaCollections->filter(function($collection) use ($file){
+        $files->each(function ($file) use ($mediaCollections) {
+            $collection = $mediaCollections->filter(function ($collection) use ($file) {
                 return $collection->name == $file['collection'];
             })->first();
 
-            if($collection) {                
-                if(isset($file['id']) && $file['id']) {
-                    if(isset($file['deleted']) && $file['deleted']) {
-                        if($medium = app(MediaModel::class)->find($file['id'])) {
+            if ($collection) {
+                if (isset($file['id']) && $file['id']) {
+                    if (isset($file['deleted']) && $file['deleted']) {
+                        if ($medium = app(MediaModel::class)->find($file['id'])) {
                             $medium->delete();
                         }
                     } /* else {
                         TODO: update meta data?
                     }*/
-                }
-                else {
+                } else {
                     $metaData = [];
-                    if(isset($file['name'])) {
+                    if (isset($file['name'])) {
                         $metaData['name'] = $file['name'];
                     }
 
-                    if(isset($file['file_name'])) {
+                    if (isset($file['file_name'])) {
                         $metaData['file_name'] = $file['file_name'];
                     }
 
-                    if(isset($file['width'])) {
+                    if (isset($file['width'])) {
                         $metaData['width'] = $file['width'];
                     }
 
-                    if(isset($file['height'])) {
+                    if (isset($file['height'])) {
                         $metaData['height'] = $file['height'];
                     }
 
@@ -68,32 +63,32 @@ trait HasMediaCollectionsTrait {
                     $this->validateSizeAndTypeOfFile($file, $collection);
 
                     $this->addMedia($file)
-                         ->withCustomProperties($metaData)
-                         ->toMediaCollection($collection->name, $collection->disk);
+                        ->withCustomProperties($metaData)
+                        ->toMediaCollection($collection->name, $collection->disk);
                 }
             }
         });
     }
 
-   
+
 
     /**
-      * Validate uploaded files count in collection
-      *
-      * @throws FileCannotBeAdded/TooManyFiles 
-      * 
-      */ 
+     * Validate uploaded files count in collection
+     *
+     * @throws FileCannotBeAdded/TooManyFiles
+     *
+     */
 
-     //FIXME: ble, upratat cele
+    //FIXME: ble, upratat cele
     public function validateCollectionMediaCount(Collection $files) {
-        $files->groupBy('collection')->each(function($collectionMedia, $collectionName) {
+        $files->groupBy('collection')->each(function ($collectionMedia, $collectionName) {
             $collection = $this->getMediaCollection($collectionName);
 
-            if($collection->maxNumberOfFiles) {
+            if ($collection->maxNumberOfFiles) {
                 $alreadyUploadedCollectionMedia = $this->getMedia($collectionName)->count();
 
-                if(($collectionMedia->count() + $alreadyUploadedCollectionMedia) > $collection->maxNumberOfFiles) {
-                    throw TooManyFiles::create(($collectionMedia->count() + $alreadyUploadedCollectionMedia), $collection->maxNumberOfFiles, $collection->name); 
+                if (($collectionMedia->count() + $alreadyUploadedCollectionMedia) > $collection->maxNumberOfFiles) {
+                    throw TooManyFiles::create(($collectionMedia->count() + $alreadyUploadedCollectionMedia), $collection->maxNumberOfFiles, $collection->name);
                 }
             }
         });
@@ -108,11 +103,11 @@ trait HasMediaCollectionsTrait {
      *
      */
     public function validateSizeAndTypeOfFile($filePath, $mediaCollection) {
-        if($mediaCollection->acceptedFileTypes) {
+        if ($mediaCollection->acceptedFileTypes) {
             $this->guardAgainstInvalidMimeType($filePath, $mediaCollection->acceptedFileTypes);
         }
 
-        if($mediaCollection->maxFilesize) {
+        if ($mediaCollection->maxFilesize) {
             $this->guardAgainstFilesizeLimit($filePath, $mediaCollection->maxFilesize, $mediaCollection->name);
         }
     }
@@ -121,7 +116,7 @@ trait HasMediaCollectionsTrait {
     protected function guardAgainstFilesizeLimit($filePath, $maxFilesize, $name) {
         $validation = Validator::make(
             ['file' => new File($filePath)],
-            ['file' => 'max:'.(round($maxFilesize/1024))]
+            ['file' => 'max:' . (round($maxFilesize / 1024))]
         );
 
         if ($validation->fails()) {
@@ -136,11 +131,12 @@ trait HasMediaCollectionsTrait {
     }
 
     public static function bootHasMediaCollectionsTrait() {
-        static::saving(function($model) {
-            if($model->shouldAutoProcessMedia()) {
-                $request = app(Request::class);
+        static::saving(function ($model) {
+            if ($model->shouldAutoProcessMedia()) {
+                $request = request();
 
-                if($request->has('files')) {
+                // FIXME what API should we expect? hard-coded files value or maybe according the collection name maybe?
+                if ($request->has('files')) {
                     $model->processMedia(collect($request->get('files')));
                 }
             }
@@ -148,7 +144,7 @@ trait HasMediaCollectionsTrait {
     }
 
     protected function shouldAutoProcessMedia() {
-        // TODO implement this method. Inspire by some Laravel package.
+        // TODO implement this method
 //        if (property_exists($this, 'autoProcessMedia') && !!$this->autoProcessMedia) {
 //
 //        }
@@ -161,7 +157,7 @@ trait HasMediaCollectionsTrait {
         $this->registerMediaCollections();
     }
 
-    public function addMediaCollection($name) : \Brackets\Media\HasMedia\Collection {
+    public function addMediaCollection($name): \Brackets\Media\HasMedia\Collection {
         $collection = \Brackets\Media\HasMedia\Collection::create($name);
 
         $this->mediaCollections->push($collection);
@@ -169,12 +165,12 @@ trait HasMediaCollectionsTrait {
         return $collection;
     }
 
-    public function getMediaCollections() : Collection {
+    public function getMediaCollections(): Collection {
         return $this->mediaCollections;
     }
 
     public function getMediaCollection($collectionName) {
-        $foundCollections = $this->getMediaCollections()->filter(function($collection) use ($collectionName){
+        $foundCollections = $this->getMediaCollections()->filter(function ($collection) use ($collectionName) {
             return $collection->name == $collectionName;
         });
 
@@ -182,41 +178,41 @@ trait HasMediaCollectionsTrait {
     }
 
     public function getImageMediaCollections() {
-        return $this->getMediaCollections()->filter(function($collection){
+        return $this->getMediaCollections()->filter(function ($collection) {
             return $collection->isImage();
         });
     }
 
     public function getThumbsForCollection(string $collectionName) {
         $collection = $this->getMediaCollection($collectionName);
-        
+
         //FIXME: if image and thumb_200 doesnt exist throw exception to add thumb_200
-        if($this->hasMediaConversion('thumb_200')) {
+        if ($this->hasMediaConversion('thumb_200')) {
             throw ThumbsDoesNotExists::thumbsConversionNotFound();
         }
 
-        return $this->getMedia($collectionName)->map(function($medium) use ($collection) { 
-            return [ 
-                'id'         => $medium->id,
-                'url'        => $medium->getUrl(),
-                'thumb_url'  => $collection->isImage() ? $medium->getUrl('thumb_200') : $medium->getUrl(), 
-                'type'       => $medium->mime_type,
+        return $this->getMedia($collectionName)->map(function ($medium) use ($collection) {
+            return [
+                'id' => $medium->id,
+                'url' => $medium->getUrl(),
+                'thumb_url' => $collection->isImage() ? $medium->getUrl('thumb_200') : $medium->getUrl(),
+                'type' => $medium->mime_type,
                 'collection' => $collection->name,
-                'name'       => $medium->hasCustomProperty('name') ? $medium->getCustomProperty('name') : $medium->file_name, 
-                'size'       => $medium->size
+                'name' => $medium->hasCustomProperty('name') ? $medium->getCustomProperty('name') : $medium->file_name,
+                'size' => $medium->size
             ];
         });
     }
 
     //FIXME: this definitely shouldn't be here
     public function registerComponentThumbs() {
-        $this->getImageMediaCollections()->each(function($collection) {
+        $this->getImageMediaCollections()->each(function ($collection) {
             $this->addMediaConversion('thumb_200')
-                 ->width(200)
-                 ->height(200)
-                 ->fit('crop', 200, 200)
-                 ->optimize()
-                 ->performOnCollections($collection->name);
+                ->width(200)
+                ->height(200)
+                ->fit('crop', 200, 200)
+                ->optimize()
+                ->performOnCollections($collection->name);
         });
     }
 }
