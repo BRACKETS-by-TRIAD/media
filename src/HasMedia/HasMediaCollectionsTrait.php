@@ -112,7 +112,7 @@ trait HasMediaCollectionsTrait {
         }
     }
 
-    //FIXME: PR do spatie? guardAgainstInvalidMimeType bol takto pridany https://github.com/spatie/laravel-medialibrary/pull/648
+    //FIXME PR for spatie? inspired by https://github.com/spatie/laravel-medialibrary/pull/648
     protected function guardAgainstFilesizeLimit($filePath, $maxFilesize, $name) {
         $validation = Validator::make(
             ['file' => new File($filePath)],
@@ -157,8 +157,8 @@ trait HasMediaCollectionsTrait {
         $this->registerMediaCollections();
     }
 
-    public function addMediaCollection($name): \Brackets\Media\HasMedia\Collection {
-        $collection = \Brackets\Media\HasMedia\Collection::create($name);
+    public function addMediaCollection($name): \Brackets\Media\HasMedia\MediaCollection {
+        $collection = \Brackets\Media\HasMedia\MediaCollection::create($name);
 
         $this->mediaCollections->push($collection);
 

@@ -17,7 +17,7 @@ use Exception;
  * @property-read string $uploadPermission
  */
 
-class Collection  {
+class MediaCollection  {
 
     protected $name;
     protected $title;

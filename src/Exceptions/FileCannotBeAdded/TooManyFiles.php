@@ -9,7 +9,6 @@ class TooManyFiles extends FileCannotBeAdded
 {
     public static function create($fileCount, $maxFileCount, $collectionName)
     {
-
         return new static("Max file count in {$collectionName} is {$maxFileCount}");
     }
 }
