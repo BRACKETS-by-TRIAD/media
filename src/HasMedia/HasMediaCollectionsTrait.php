@@ -37,7 +37,9 @@ trait HasMediaCollectionsTrait {
      */
     public function processMedia(Collection $media) {
 
-        // TODO do we want to use this proprietary structure $files? Don't we want to use maybe some class to represent the data structure?
+        // TODO do we want to use this proprietary structure $files?
+        // Don't we want to use maybe some class to represent the data structure?
+        // Maybe what we want is a MediumOperation class, which holds {collection name, operation (detach, attach, replace), metadata, filepath)} what do you think?
 
         $mediaCollections = $this->getMediaCollections();
 
