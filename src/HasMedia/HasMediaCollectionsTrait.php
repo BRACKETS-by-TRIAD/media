@@ -14,6 +14,9 @@ use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait as ParentHasMediaTrait;
 use Spatie\MediaLibrary\Media as MediaModel;
 
+/**
+ * @property-read boolean $autoProcessMedia
+ */
 trait HasMediaCollectionsTrait {
 
     use ParentHasMediaTrait;
@@ -130,7 +133,7 @@ trait HasMediaCollectionsTrait {
         }
     }
 
-    //FIXME PR for spatie? inspired by https://github.com/spatie/laravel-medialibrary/pull/648
+    // maybe this could be PR to spatie/laravel-medialibrary
     protected function guardAgainstFilesizeLimit($filePath, $maxFilesize, $name) {
         $validation = Validator::make(
             ['file' => new File($filePath)],
@@ -142,6 +145,9 @@ trait HasMediaCollectionsTrait {
         }
     }
 
+    /**
+     * This hooks the initialization to the right place
+     */
     protected function bootIfNotBooted() {
         parent::bootIfNotBooted();
 
@@ -150,10 +156,11 @@ trait HasMediaCollectionsTrait {
 
     public static function bootHasMediaCollectionsTrait() {
         static::saving(function ($model) {
+            /** @var self $model */
             if ($model->shouldAutoProcessMedia()) {
                 $request = request();
 
-                // FIXME what API should we expect? hard-coded files value or maybe according the collection name maybe?
+                // FIXME what API should we expect? hard-coded files value or maybe according the collection name maybe?, so something like $model->processMedia(collect($request->only($model->getMediaCollections()->map->name)));
                 if ($request->has('files')) {
                     $model->processMedia(collect($request->get('files')));
                 }
@@ -162,10 +169,10 @@ trait HasMediaCollectionsTrait {
     }
 
     protected function shouldAutoProcessMedia() {
-        // TODO implement this method
-//        if (property_exists($this, 'autoProcessMedia') && !!$this->autoProcessMedia) {
-//
-//        }
+        if (property_exists($this, 'autoProcessMedia') && !!$this->autoProcessMedia) {
+            return false;
+        }
+
         return true;
     }
 
