@@ -28,6 +28,8 @@ trait HasMediaCollectionsTrait {
     /**
      * Attach all defined media collection to the model
      *
+     * TODO explaing what it does - specify the structure used, note that it does validation first and after everything passes, it executes attaching (or detaching) the media
+     *
      * @param Collection $files
      */
     public function processMedia(Collection $files) {
@@ -39,6 +41,8 @@ trait HasMediaCollectionsTrait {
         // TODO why this is not done per collection basis? What is the reason?
         $this->validateCollectionMediaCount($files);
 
+        // TODO we should first validate EVERYHTING and once validated we execute stuff
+
         $files->each(function ($file) use ($mediaCollections) {
             $collection = $mediaCollections->get($file['collection']);
 
@@ -46,14 +50,13 @@ trait HasMediaCollectionsTrait {
                 // TODO what do we do? do we just skip?
             }
 
-
             if (isset($file['id']) && $file['id']) {
                 if (isset($file['deleted']) && $file['deleted']) {
                     if ($medium = app(MediaModel::class)->find($file['id'])) {
                         $medium->delete();
                     }
                 } /* else {
-                    TODO: update meta data?
+                    TODO update meta data? - PPE: What was meant with this TODO? I have no idea
                 }*/
             } else {
 
@@ -62,29 +65,27 @@ trait HasMediaCollectionsTrait {
                 if (isset($file['name'])) {
                     $metaData['name'] = $file['name'];
                 }
-
                 if (isset($file['file_name'])) {
                     $metaData['file_name'] = $file['file_name'];
                 }
-
                 if (isset($file['width'])) {
                     $metaData['width'] = $file['width'];
                 }
-
                 if (isset($file['height'])) {
                     $metaData['height'] = $file['height'];
                 }
 
+                // TODO extract "uploads" disk into config
                 $file = Storage::disk('uploads')->getDriver()->getAdapter()->applyPathPrefix($file['path']);
 
-                // TODO check if this fails, if whole request fails - it should
+                // TODO extract into validation phase
                 $this->validateSizeAndTypeOfFile($file, $collection);
 
                 $this->addMedia($file)
                     ->withCustomProperties($metaData)
                     ->toMediaCollection($collection->name, $collection->disk);
             }
-        }
+        });
     }
 
     /**
