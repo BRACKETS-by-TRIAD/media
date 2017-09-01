@@ -226,9 +226,7 @@ trait HasMediaCollectionsTrait {
 
     // FIXME do we really want to have such filter? Anyone can filter it up very easily..
     public function getImageMediaCollections() {
-        return $this->getMediaCollections()->filter(function ($collection) {
-            return $collection->isImage();
-        });
+        return $this->getMediaCollections()->filter->isImage();
     }
 
     // FIXME where this method should be?
