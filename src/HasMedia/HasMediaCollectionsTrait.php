@@ -252,7 +252,7 @@ trait HasMediaCollectionsTrait {
         });
     }
 
-    //FIXME: this definitely shouldn't be here
+    //FIXME: this definitely shouldn't be here. Maybe it should not be anywhere :)
     public function registerComponentThumbs() {
         $this->getImageMediaCollections()->each(function ($collection) {
             $this->addMediaConversion('thumb_200')

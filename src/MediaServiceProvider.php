@@ -27,7 +27,7 @@ class MediaServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //FIXME: lepsie by bolo keby sa to dalo publishnut do filesystems
+        //FIXME it would be nice if you could somehow publish into filesystems
         $this->mergeConfigFrom(
             __DIR__ . '/../config/filesystems.php', 'filesystems.disks'
         );
