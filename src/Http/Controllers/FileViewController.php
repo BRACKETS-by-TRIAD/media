@@ -27,7 +27,7 @@ class FileViewController extends BaseController {
         if ($medium = app(MediaModel::class)->find($fileId)) {
 
             /** @var HasMediaCollectionsTrait $model */
-            $model = $medium->model;
+            $model = $medium->model; // PHPStorm sees it as an error - Spatie should fix this using PHPDoc
 
             if ($collection = $model->getMediaCollection($medium->collection_name)) {
 

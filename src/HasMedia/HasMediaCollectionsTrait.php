@@ -22,7 +22,7 @@ trait HasMediaCollectionsTrait {
     use ParentHasMediaTrait;
 
     /**
-     * Collection of MediaCollection-s
+     * Collection of Media Collections
      *
      * @var Collection
      */
@@ -168,6 +168,7 @@ trait HasMediaCollectionsTrait {
         });
     }
 
+    // TODO maybe we want to add an option to globally turn off auto process for whole app?
     protected function shouldAutoProcessMedia() {
         if (property_exists($this, 'autoProcessMedia') && !!$this->autoProcessMedia) {
             return false;
@@ -182,13 +183,20 @@ trait HasMediaCollectionsTrait {
         $this->registerMediaCollections();
     }
 
-    public function addMediaCollection($name): \Brackets\Media\HasMedia\MediaCollection {
+    /**
+     * Register new Media Collection
+     *
+     * @param $name
+     * @return MediaCollection
+     * @throws MediaCollectionAlreadyDefined
+     */
+    public function addMediaCollection($name): MediaCollection {
         // FIXME cover this condition in tests
         if ($this->mediaCollections->has($name)) {
             throw new MediaCollectionAlreadyDefined;
         }
 
-        $collection = \Brackets\Media\HasMedia\MediaCollection::create($name);
+        $collection = MediaCollection::create($name);
 
         $this->mediaCollections->put($name, $collection);
 
@@ -196,31 +204,38 @@ trait HasMediaCollectionsTrait {
     }
 
     /**
-     * Returns a collection of MediaCollections
+     * Returns a collection of Media Collections
      *
-     * @return Collection
+     * @return Collection|MediaCollection[]
      */
     public function getMediaCollections(): Collection {
         return $this->mediaCollections;
     }
 
-    public function getMediaCollection($collectionName) {
-        $foundCollections = $this->getMediaCollections()->filter(function ($collection) use ($collectionName) {
-            return $collection->name == $collectionName;
-        });
-
-        return $foundCollections->count() > 0 ? $foundCollections->first() : false;
+    /**
+     * Returns a Media Collection according to the name
+     *
+     * If Media Collection was not registered on this model, null is returned
+     *
+     * @param $name
+     * @return MediaCollection|null
+     */
+    public function getMediaCollection($name) : MediaCollection {
+        return $this->mediaCollections->get($name);
     }
 
+    // FIXME do we really want to have such filter? Anyone can filter it up very easily..
     public function getImageMediaCollections() {
         return $this->getMediaCollections()->filter(function ($collection) {
             return $collection->isImage();
         });
     }
 
+    // FIXME where this method should be?
     public function getThumbsForCollection(string $collectionName) {
         $collection = $this->getMediaCollection($collectionName);
 
+        // FIXME why this does not check if the Media Collection has the conversion, it only checks if conversion exists in general?
         //FIXME: if image and thumb_200 doesnt exist throw exception to add thumb_200
         if ($this->hasMediaConversion('thumb_200')) {
             throw ThumbsDoesNotExists::thumbsConversionNotFound();
