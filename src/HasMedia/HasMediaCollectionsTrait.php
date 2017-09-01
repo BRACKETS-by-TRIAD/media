@@ -29,33 +29,33 @@ trait HasMediaCollectionsTrait {
     protected $mediaCollections;
 
     /**
-     * Attach all defined media collection to the model
+     * Attaches and/or detaches all defined media collection to the model according to the $media
      *
      * TODO explaing what it does - specify the structure used, note that it does validation first and after everything passes, it executes attaching (or detaching) the media
      *
-     * @param Collection $files
+     * @param Collection $media
      */
-    public function processMedia(Collection $files) {
+    public function processMedia(Collection $media) {
 
         // TODO do we want to use this proprietary structure $files? Don't we want to use maybe some class to represent the data structure?
 
         $mediaCollections = $this->getMediaCollections();
 
         // TODO why this is not done per collection basis? What is the reason?
-        $this->validateCollectionMediaCount($files);
+        $this->validateCollectionMediaCount($media);
 
         // TODO we should first validate EVERYHTING and once validated we execute stuff
 
-        $files->each(function ($file) use ($mediaCollections) {
-            $collection = $mediaCollections->get($file['collection']);
+        $media->each(function ($mediumOperation) use ($mediaCollections) {
+            $collection = $mediaCollections->get($mediumOperation['collection']);
 
             if (is_null($collection)) {
                 // TODO what do we do? do we just skip?
             }
 
-            if (isset($file['id']) && $file['id']) {
-                if (isset($file['deleted']) && $file['deleted']) {
-                    if ($medium = app(MediaModel::class)->find($file['id'])) {
+            if (isset($mediumOperation['id']) && $mediumOperation['id']) {
+                if (isset($mediumOperation['deleted']) && $mediumOperation['deleted']) {
+                    if ($medium = app(MediaModel::class)->find($mediumOperation['id'])) {
                         $medium->delete();
                     }
                 } /* else {
@@ -65,26 +65,26 @@ trait HasMediaCollectionsTrait {
 
                 // TODO this is really sick, it should be extracted in a method
                 $metaData = [];
-                if (isset($file['name'])) {
-                    $metaData['name'] = $file['name'];
+                if (isset($mediumOperation['name'])) {
+                    $metaData['name'] = $mediumOperation['name'];
                 }
-                if (isset($file['file_name'])) {
-                    $metaData['file_name'] = $file['file_name'];
+                if (isset($mediumOperation['file_name'])) {
+                    $metaData['file_name'] = $mediumOperation['file_name'];
                 }
-                if (isset($file['width'])) {
-                    $metaData['width'] = $file['width'];
+                if (isset($mediumOperation['width'])) {
+                    $metaData['width'] = $mediumOperation['width'];
                 }
-                if (isset($file['height'])) {
-                    $metaData['height'] = $file['height'];
+                if (isset($mediumOperation['height'])) {
+                    $metaData['height'] = $mediumOperation['height'];
                 }
 
                 // TODO extract "uploads" disk into config
-                $file = Storage::disk('uploads')->getDriver()->getAdapter()->applyPathPrefix($file['path']);
+                $mediumOperation = Storage::disk('uploads')->getDriver()->getAdapter()->applyPathPrefix($mediumOperation['path']);
 
                 // TODO extract into validation phase
-                $this->validateSizeAndTypeOfFile($file, $collection);
+                $this->validateSizeAndTypeOfFile($mediumOperation, $collection);
 
-                $this->addMedia($file)
+                $this->addMedia($mediumOperation)
                     ->withCustomProperties($metaData)
                     ->toMediaCollection($collection->name, $collection->disk);
             }
