@@ -2,11 +2,11 @@
 
 namespace Brackets\Media\HasMedia;
 
+use Brackets\Media\Exceptions\Collections\MediaCollectionAlreadyDefined;
 use Brackets\Media\Exceptions\Collections\ThumbsDoesNotExists;
 use Brackets\Media\Exceptions\FileCannotBeAdded\FileIsTooBig;
 use Brackets\Media\Exceptions\FileCannotBeAdded\TooManyFiles;
 use Illuminate\Http\File;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -18,59 +18,74 @@ trait HasMediaCollectionsTrait {
 
     use ParentHasMediaTrait;
 
-    /** @var  Collection */
+    /**
+     * Collection of MediaCollection-s
+     *
+     * @var Collection
+     */
     protected $mediaCollections;
 
-    // TODO reconsider, if we really need to work with Collection (probably yes)
+    /**
+     * Attach all defined media collection to the model
+     *
+     * @param Collection $files
+     */
     public function processMedia(Collection $files) {
+
+        // TODO do we want to use this proprietary structure $files? Don't we want to use maybe some class to represent the data structure?
+
         $mediaCollections = $this->getMediaCollections();
 
+        // TODO why this is not done per collection basis? What is the reason?
         $this->validateCollectionMediaCount($files);
 
         $files->each(function ($file) use ($mediaCollections) {
-            $collection = $mediaCollections->filter(function ($collection) use ($file) {
-                return $collection->name == $file['collection'];
-            })->first();
+            $collection = $mediaCollections->get($file['collection']);
 
-            if ($collection) {
-                if (isset($file['id']) && $file['id']) {
-                    if (isset($file['deleted']) && $file['deleted']) {
-                        if ($medium = app(MediaModel::class)->find($file['id'])) {
-                            $medium->delete();
-                        }
-                    } /* else {
-                        TODO: update meta data?
-                    }*/
-                } else {
-                    $metaData = [];
-                    if (isset($file['name'])) {
-                        $metaData['name'] = $file['name'];
-                    }
-
-                    if (isset($file['file_name'])) {
-                        $metaData['file_name'] = $file['file_name'];
-                    }
-
-                    if (isset($file['width'])) {
-                        $metaData['width'] = $file['width'];
-                    }
-
-                    if (isset($file['height'])) {
-                        $metaData['height'] = $file['height'];
-                    }
-
-                    $file = Storage::disk('uploads')->getDriver()->getAdapter()->applyPathPrefix($file['path']);
-                    $this->validateSizeAndTypeOfFile($file, $collection);
-
-                    $this->addMedia($file)
-                        ->withCustomProperties($metaData)
-                        ->toMediaCollection($collection->name, $collection->disk);
-                }
+            if (is_null($collection)) {
+                // TODO what do we do? do we just skip?
             }
-        });
+
+
+            if (isset($file['id']) && $file['id']) {
+                if (isset($file['deleted']) && $file['deleted']) {
+                    if ($medium = app(MediaModel::class)->find($file['id'])) {
+                        $medium->delete();
+                    }
+                } /* else {
+                    TODO: update meta data?
+                }*/
+            } else {
+
+                // TODO this is really sick, it should be extracted in a method
+                $metaData = [];
+                if (isset($file['name'])) {
+                    $metaData['name'] = $file['name'];
+                }
+
+                if (isset($file['file_name'])) {
+                    $metaData['file_name'] = $file['file_name'];
+                }
+
+                if (isset($file['width'])) {
+                    $metaData['width'] = $file['width'];
+                }
+
+                if (isset($file['height'])) {
+                    $metaData['height'] = $file['height'];
+                }
+
+                $file = Storage::disk('uploads')->getDriver()->getAdapter()->applyPathPrefix($file['path']);
+
+                // TODO check if this fails, if whole request fails - it should
+                $this->validateSizeAndTypeOfFile($file, $collection);
+
+                $this->addMedia($file)
+                    ->withCustomProperties($metaData)
+                    ->toMediaCollection($collection->name, $collection->disk);
+            }
+        }
     }
-
-
 
     /**
      * Validate uploaded files count in collection
@@ -78,9 +93,12 @@ trait HasMediaCollectionsTrait {
      * @throws FileCannotBeAdded/TooManyFiles
      *
      */
-
-    //FIXME: ble, upratat cele
     public function validateCollectionMediaCount(Collection $files) {
+
+        //FIXME refactor
+
+        // TODO do we want to throw an exception? If you have limit only one file per media collection, don't you usually want to automatically replace the current file with the new one?
+
         $files->groupBy('collection')->each(function ($collectionMedia, $collectionName) {
             $collection = $this->getMediaCollection($collectionName);
 
@@ -93,7 +111,6 @@ trait HasMediaCollectionsTrait {
             }
         });
     }
-
 
     /**
      * Validate uploaded files mime type and size
@@ -158,13 +175,23 @@ trait HasMediaCollectionsTrait {
     }
 
     public function addMediaCollection($name): \Brackets\Media\HasMedia\MediaCollection {
+        // FIXME cover this condition in tests
+        if ($this->mediaCollections->has($name)) {
+            throw new MediaCollectionAlreadyDefined;
+        }
+
         $collection = \Brackets\Media\HasMedia\MediaCollection::create($name);
 
-        $this->mediaCollections->push($collection);
+        $this->mediaCollections->put($name, $collection);
 
         return $collection;
     }
 
+    /**
+     * Returns a collection of MediaCollections
+     *
+     * @return Collection
+     */
     public function getMediaCollections(): Collection {
         return $this->mediaCollections;
     }

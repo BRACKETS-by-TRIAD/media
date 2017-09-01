@@ -21,7 +21,7 @@ class FileUploaderTest extends TestCase
         $response->assertSee('psd');
     }
 
-    /** @test */
+//    /** @test */
     public function unauthorized_user_cannot_upload_file() {
 //        TODO
         return true;

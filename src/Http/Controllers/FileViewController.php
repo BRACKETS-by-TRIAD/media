@@ -2,6 +2,8 @@
 
 namespace Brackets\Media\Http\Controllers;
 
+use Brackets\Media\HasMedia\HasMediaCollections;
+use Brackets\Media\HasMedia\HasMediaCollectionsTrait;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -23,10 +25,14 @@ class FileViewController extends BaseController {
         list($fileId) = explode("/", $request->get('path'), 2);
 
         if ($medium = app(MediaModel::class)->find($fileId)) {
-            if ($collection = $medium->model->getMediaCollection($medium->collection_name)) {
+
+            /** @var HasMediaCollectionsTrait $model */
+            $model = $medium->model;
+
+            if ($collection = $model->getMediaCollection($medium->collection_name)) {
 
                 if ($collection->viewPermission) {
-                    $this->authorize($collection->viewPermission, [$medium->model]);
+                    $this->authorize($collection->viewPermission, [$model]);
                 }
 
                 $storagePath = $request->get('path');

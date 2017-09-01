@@ -40,8 +40,7 @@ class HasMediaCollectionsTest extends TestCase
     /** @test */
     public function user_can_register_new_file_collection_and_upload_files()
     {
-        $this->testModel->addMediaCollection('documents')
-                        ->title('Documents');
+        $this->testModel->addMediaCollection('documents');
 
         $this->assertCount(1, $this->testModel->getMediaCollections());
         $this->assertCount(0, $this->testModel->getMedia());
@@ -117,7 +116,6 @@ class HasMediaCollectionsTest extends TestCase
         $this->expectException(MimeTypeNotAllowed::class);
 
         $this->testModel->addMediaCollection('documents')
-                        ->title('Documents')
                         ->accepts('application/pdf, application/msword');
 
         $request = $this->getRequest([
@@ -139,7 +137,6 @@ class HasMediaCollectionsTest extends TestCase
 
      public function multiple_allowed_mime_types_can_be_defined() {
         $this->testModel->addMediaCollection('documents')
-                        ->title('Documents')
                         // FIXME better API would be to use PHP7 ... option to allow multiple values
                         ->accepts('application/pdf, application/msword');
 
@@ -165,7 +162,6 @@ class HasMediaCollectionsTest extends TestCase
         $this->expectException(TooManyFiles::class);
 
         $this->testModel->addMediaCollection('documents')
-                        ->title('Documents')
                         ->maxNumberOfFiles(2);
 
         $request = $this->getRequest([
@@ -202,7 +198,6 @@ class HasMediaCollectionsTest extends TestCase
         $this->expectException(TooManyFiles::class);
 
         $this->testModel->addMediaCollection('documents')
-                        ->title('Documents')
                         ->maxNumberOfFiles(2);
 
         $request = $this->getRequest([
@@ -228,7 +223,6 @@ class HasMediaCollectionsTest extends TestCase
         $this->assertCount(0, $this->testModel->getMediaCollections());
 
         $this->testModel->addMediaCollection('documents')
-                        ->title('Documents')
                         ->maxNumberOfFiles(2);
 
         $request2 = $this->getRequest([
@@ -253,7 +247,6 @@ class HasMediaCollectionsTest extends TestCase
     /** @test */ // FIXME this one is redundant, we already tested that in previous test, I think we can totally delete this one
     public function user_can_upload_exact_number_of_defined_files() {
         $this->testModel->addMediaCollection('documents')
-                        ->title('Documents')
                         ->maxNumberOfFiles(2);
 
         $request = $this->getRequest([
@@ -284,7 +277,6 @@ class HasMediaCollectionsTest extends TestCase
         $this->expectException(FileIsTooBig::class);
 
         $this->testModel->addMediaCollection('documents')
-                        ->title('Documents')
                         ->maxFilesize(100*1024); //100kb
 
 
@@ -308,7 +300,6 @@ class HasMediaCollectionsTest extends TestCase
     /** @test */
     public function user_can_upload_files_in_max_file_size() {
         $this->testModel->addMediaCollection('documents')
-                        ->title('Documents')
                         ->maxFilesize(1*1024); //1kb
 
         $request = $this->getRequest([
