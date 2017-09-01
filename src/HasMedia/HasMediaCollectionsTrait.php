@@ -20,6 +20,7 @@ use Spatie\MediaLibrary\Media as MediaModel;
 trait HasMediaCollectionsTrait {
 
     use ParentHasMediaTrait;
+    // TODO after refactor, if the class is still too long, extract into sub-traits
 
     /**
      * Collection of Media Collections
