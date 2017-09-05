@@ -34,63 +34,103 @@ trait HasMediaCollectionsTrait {
      *
      * TODO explaing what it does - specify the structure used, note that it does validation first and after everything passes, it executes attaching (or detaching) the media
      *
-     * @param Collection $media
+     * @param Collection $inputMedia
      */
-    public function processMedia(Collection $media) {
+    public function processMedia(Collection $inputMedia) {
+//        Original structure
+//        $request = [
+//            'files' => [
+//                [
+//                    'collection' => 'documents',
+//                    'name'       => 'test',
+//                    'width'      => 200,
+//                    'height'     => 200,
+//                    'model'      => 'Brackets\Media\Test\TestModelWithCollections',
+//                    'path'       => 'test.pdf',
+//                ],
+//            ],
+//        ];
 
-        // TODO do we want to use this proprietary structure $files?
-        // Don't we want to use maybe some class to represent the data structure?
-        // Maybe what we want is a MediumOperation class, which holds {collection name, operation (detach, attach, replace), metadata, filepath)} what do you think?
+//        Changed structure
+//        Don't we want to use maybe some class to represent the data structure?
+//        Maybe what we want is a MediumOperation class, which holds {collection name, operation (detach, attach, replace), metadata, filepath)} what do you think?
+//        $request = [
+//            'documents' => [
+//                [
+//                    'id' => null,
+//                    'collection_name' => 'documents',
+//                    'model' => 'Brackets\Media\Test\TestModelWithCollections',
+//                    'path' => 'test.pdf',
+//                    'action' => 'add',
+//                    'meta_data' => [
+//                        'name' => 'test',
+//                        'width' => 200,
+//                        'height' => 200,
+//                    ],
+//                ],
+//            ],
+//        ];
 
-        $mediaCollections = $this->getMediaCollections();
+        //First validate input
+        $this->getMediaCollections()->each(function($mediaCollection) use ($inputMedia) {
+             $this->validate(collect($inputMedia->get($mediaCollection->getName())), $mediaCollection);
+        });
 
-        // TODO why this is not done per collection basis? What is the reason?
-        $this->validateCollectionMediaCount($media);
+        //Then process each media
+        $this->getMediaCollections()->each(function($mediaCollection) use ($inputMedia) {
+            collect($inputMedia->get($mediaCollection->getName()))->each(function($inputMedium) use ($mediaCollection) {
+                $this->processMedium($inputMedium, $mediaCollection);
+            });
+        });
+    }
 
-        // TODO we should first validate EVERYHTING and once validated we execute stuff
+    public function processMedium($inputMedium, $mediaCollection)
+    {
+        //TODO refactore
+        if (isset($inputMedium['id']) && $inputMedium['id']) {
+            if($medium = app(MediaModel::class)->find($inputMedium['id'])) {
+                if (isset($inputMedium['action']) && $inputMedium['action'] == 'delete') {
+                    $medium->delete();
+                } else {
+                    $medium->customProperties = $inputMedium['meta_data'];
+                    $medium->save();
+                }
+            }
+        } else {
 
-        $media->each(function ($mediumOperation) use ($mediaCollections) {
-            $collection = $mediaCollections->get($mediumOperation['collection']);
-
-            if (is_null($collection)) {
-                // TODO what do we do? do we just skip?
+            // TODO this is really sick, it should be extracted in a method
+            $metaData = [];
+            if (isset($inputMedium['name'])) {
+                $metaData['name'] = $inputMedium['name'];
+            }
+            if (isset($inputMedium['file_name'])) {
+                $metaData['file_name'] = $inputMedium['file_name'];
+            }
+            if (isset($inputMedium['width'])) {
+                $metaData['width'] = $inputMedium['width'];
+            }
+            if (isset($inputMedium['height'])) {
+                $metaData['height'] = $inputMedium['height'];
             }
 
-            if (isset($mediumOperation['id']) && $mediumOperation['id']) {
-                if (isset($mediumOperation['deleted']) && $mediumOperation['deleted']) {
-                    if ($medium = app(MediaModel::class)->find($mediumOperation['id'])) {
-                        $medium->delete();
-                    }
-                } /* else {
-                    TODO update meta data? - PPE: What was meant with this TODO? I have no idea
-                }*/
-            } else {
+            // TODO extract "uploads" disk into config
+            $inputMedium = Storage::disk('uploads')->getDriver()->getAdapter()->applyPathPrefix($inputMedium['path']);
 
-                // TODO this is really sick, it should be extracted in a method
-                $metaData = [];
-                if (isset($mediumOperation['name'])) {
-                    $metaData['name'] = $mediumOperation['name'];
-                }
-                if (isset($mediumOperation['file_name'])) {
-                    $metaData['file_name'] = $mediumOperation['file_name'];
-                }
-                if (isset($mediumOperation['width'])) {
-                    $metaData['width'] = $mediumOperation['width'];
-                }
-                if (isset($mediumOperation['height'])) {
-                    $metaData['height'] = $mediumOperation['height'];
-                }
+            // TODO extract into validation phase
+            $this->validateSizeAndTypeOfFile($inputMedium, $collection);
 
-                // TODO extract "uploads" disk into config
-                $mediumOperation = Storage::disk('uploads')->getDriver()->getAdapter()->applyPathPrefix($mediumOperation['path']);
+            $this->addMedia($inputMedium)
+                ->withCustomProperties($metaData)
+                ->toMediaCollection($collection->name, $collection->disk);
+        }
+    }
 
-                // TODO extract into validation phase
-                $this->validateSizeAndTypeOfFile($mediumOperation, $collection);
-
-                $this->addMedia($mediumOperation)
-                    ->withCustomProperties($metaData)
-                    ->toMediaCollection($collection->name, $collection->disk);
-            }
+    public function validate(Collection $inputMediaForMediaCollection, MediaCollection $mediaCollection)
+    {
+        $this->validateCollectionMediaCount($inputMediaForMediaCollection, $mediaCollection);
+        $inputMediaForMediaCollection->each(function($inputMedium) use ($mediaCollection) {
+            $this->validateTypeOfFile($inputMedium, $mediaCollection);
+            $this->validateSize($inputMedium, $mediaCollection);
         });
     }
 
@@ -100,51 +140,61 @@ trait HasMediaCollectionsTrait {
      * @throws FileCannotBeAdded/TooManyFiles
      *
      */
-    public function validateCollectionMediaCount(Collection $files) {
-
-        //FIXME refactor
+    public function validateCollectionMediaCount(Collection $inputMediaForMediaCollection, MediaCollection $mediaCollection) {
 
         // TODO do we want to throw an exception? If you have limit only one file per media collection, don't you usually want to automatically replace the current file with the new one?
+        if ($mediaCollection->getMaxNumberOfFiles()) {
+            $alreadyUploadedMediaCount = $this->getMedia($mediaCollection->getName())->count();
+            $forAddMediaCount = $inputMediaForMediaCollection->count(function($medium) { return $medium['action'] == 'add'; });
+            $forDeleteMediaCount = $inputMediaForMediaCollection->count(function($medium) { return $medium['action'] == 'delete'; });
+            $afterUploadCount = ($forAddMediaCount + $alreadyUploadedMediaCount - $forDeleteMediaCount);
 
-        $files->groupBy('collection')->each(function ($collectionMedia, $collectionName) {
-            $collection = $this->getMediaCollection($collectionName);
-
-            if ($collection->maxNumberOfFiles) {
-                $alreadyUploadedCollectionMedia = $this->getMedia($collectionName)->count();
-
-                if (($collectionMedia->count() + $alreadyUploadedCollectionMedia) > $collection->maxNumberOfFiles) {
-                    throw TooManyFiles::create(($collectionMedia->count() + $alreadyUploadedCollectionMedia), $collection->maxNumberOfFiles, $collection->name);
-                }
+            if ($afterUploadCount > $mediaCollection->getMaxNumberOfFiles()) {
+                throw TooManyFiles::create($afterUploadCount, $mediaCollection->getMaxNumberOfFiles(), $mediaCollection->getName());
             }
-        });
+        }
     }
 
     /**
-     * Validate uploaded files mime type and size
+     * Validate uploaded file mime type
      *
      * @throws FileCannotBeAdded/MimeTypeNotAllowed
-     * @throws FileCannotBeAdded/FileIsTooBig
      *
      */
-    public function validateSizeAndTypeOfFile($filePath, $mediaCollection) {
-        if ($mediaCollection->acceptedFileTypes) {
-            $this->guardAgainstInvalidMimeType($filePath, $mediaCollection->acceptedFileTypes);
-        }
-
-        if ($mediaCollection->maxFilesize) {
-            $this->guardAgainstFilesizeLimit($filePath, $mediaCollection->maxFilesize, $mediaCollection->name);
+    public function validateTypeOfFile($inputMedium, $mediaCollection) {
+        if ($mediaCollection->getAcceptedFileTypes()) {
+            $this->guardAgainstInvalidMimeType($inputMedium['path'], $mediaCollection->getAcceptedFileTypes());
         }
     }
 
-    // maybe this could be PR to spatie/laravel-medialibrary
-    protected function guardAgainstFilesizeLimit($filePath, $maxFilesize, $name) {
+    /**
+     * Validate uploaded file size
+     *
+     * @throws FileCannotBeAdded/FileIsTooBig
+     *
+     */
+    public function validateSize($inputMedium, $mediaCollection) {
+        if ($mediaCollection->getMaxFileSize()) {
+            $this->guardAgainstFileSizeLimit($inputMedium['path'], $mediaCollection->getMaxFileSize(), $mediaCollection->getName());
+        }
+    }
+
+    /**
+     * maybe this could be PR to spatie/laravel-medialibrary
+     *
+     * @param $filePath
+     * @param $maxFileSize
+     * @param $name
+     * @throws FileIsTooBig
+     */
+    protected function guardAgainstFileSizeLimit($filePath, $maxFileSize, $name) {
         $validation = Validator::make(
             ['file' => new File($filePath)],
-            ['file' => 'max:' . (round($maxFilesize / 1024))]
+            ['file' => 'max:' . (round($maxFileSize / 1024))]
         );
 
         if ($validation->fails()) {
-            throw FileIsTooBig::create($filePath, $maxFilesize, $name);
+            throw FileIsTooBig::create($filePath, $maxFileSize, $name);
         }
     }
 
@@ -189,12 +239,13 @@ trait HasMediaCollectionsTrait {
     /**
      * Register new Media Collection
      *
+     * Adds new collection to model and set its name.
+     *
      * @param $name
      * @return MediaCollection
      * @throws MediaCollectionAlreadyDefined
      */
     public function addMediaCollection($name): MediaCollection {
-        // FIXME cover this condition in tests
         if ($this->mediaCollections->has($name)) {
             throw new MediaCollectionAlreadyDefined;
         }

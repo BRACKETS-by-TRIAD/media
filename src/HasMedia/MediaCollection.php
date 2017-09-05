@@ -18,59 +18,37 @@ class MediaCollection  {
 
     protected $name;
     protected $disk;
-    protected $is_image = false;
+    protected $isImage = false;
     protected $maxNumberOfFiles;
-    protected $maxFilesize;
+    protected $maxFileSize;
     protected $acceptedFileTypes;
     protected $viewPermission;
     protected $uploadPermission;
 
-
+    /**
+     * MediaCollection constructor.
+     * @param string $name
+     */
     public function __construct(string $name) {
         $this->name = $name;
         $this->disk = config('media-collections.public_disk', 'media');
     }
 
-    public function __get($property) {
-        switch ($property) {
-            case 'name':
-                return $this->name;
-
-            case 'disk':
-                return $this->disk;
-
-            case 'maxNumberOfFiles':
-                return $this->maxNumberOfFiles;
-
-            case 'maxFilesize':
-                return $this->maxFilesize;
-
-            case 'acceptedFileTypes':
-                return $this->acceptedFileTypes;
-
-            case 'viewPermission':
-                return $this->viewPermission;
-
-            case 'uploadPermission';
-                return $this->uploadPermission;
-        }
-
-        throw new Exception("Property [".$property."] does not exist");   
-    }
-
+    /**
+     * @param string $name
+     * @return MediaCollection
+     */
     public static function create(string $name) : self {
         return new static($name);
     }
 
-
-    // TODO what is this for? because conversions can work also on non images
     /**
      * Set this collection contains an images. This allows the conversions functionality.
      *
      * @return $this
      */
     public function image() : self {
-        $this->is_image = true;
+        $this->isImage = true;
         return $this;
     }
 
@@ -109,11 +87,11 @@ class MediaCollection  {
     /**
      * Set the file size limit
      *
-     * @param $maxFilesize
+     * @param $maxFileSize
      * @return $this
      */
-    public function maxFilesize($maxFilesize) : self {
-        $this->maxFilesize = $maxFilesize;
+    public function maxFileSize($maxFileSize) : self {
+        $this->maxFileSize = $maxFileSize;
         return $this;
     }
 
@@ -156,12 +134,68 @@ class MediaCollection  {
 
     // TODO probably deprecated?
     public function isImage() {
-        return $this->is_image;
+        return $this->isImage;
     }
 
-    // TODO probably deprecated?
+    //TODO probably deprecated?
     //FIXME: metoda disk by mohla mat druhy nepovinny paramater private, ktory len nastavi interny flag na true. Aby sme vedeli presnejsie ci ide o private alebo nie
     public function isPrivate() {
         return $this->disk == config('media-collections.private_disk');
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDisk()
+    {
+        return $this->disk;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMaxNumberOfFiles()
+    {
+        return $this->maxNumberOfFiles;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMaxFileSize()
+    {
+        return $this->maxFileSize;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAcceptedFileTypes()
+    {
+        return $this->acceptedFileTypes;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getViewPermission()
+    {
+        return $this->viewPermission;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUploadPermission()
+    {
+        return $this->uploadPermission;
     }
 }

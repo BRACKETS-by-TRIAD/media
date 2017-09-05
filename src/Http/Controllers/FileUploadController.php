@@ -20,7 +20,6 @@ class FileUploadController extends BaseController {
             return response()->json(['path' => $path], 200);
         }
 
-        // FIXME use trans() to generate this message
-        return response()->json('File was not provided', 422);
+        return response()->json(trans('media.file.not-provided'), 422);
     }
 }
