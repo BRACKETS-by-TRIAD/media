@@ -29,14 +29,14 @@ class FileViewController extends BaseController {
             /** @var HasMediaCollectionsTrait $model */
             $model = $medium->model; // PHPStorm sees it as an error - Spatie should fix this using PHPDoc
 
-            if ($collection = $model->getMediaCollection($medium->collection_name)) {
+            if ($mediaCollection = $model->getMediaCollection($medium->collection_name)) {
 
-                if ($collection->viewPermission) {
-                    $this->authorize($collection->viewPermission, [$model]);
+                if ($mediaCollection->getViewPermission()) {
+                    $this->authorize($mediaCollection->getViewPermission(), [$model]);
                 }
 
                 $storagePath = $request->get('path');
-                $fileSystem = Storage::disk($collection->disk);
+                $fileSystem = Storage::disk($mediaCollection->getDisk());
 
                 if (!$fileSystem->has($storagePath)) {
                     abort(404);

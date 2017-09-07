@@ -3,12 +3,15 @@
 namespace Brackets\Media\Test;
 
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Foundation\Exceptions\Handler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Auth\User;
+use Exception;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 
 abstract class TestCase extends Orchestra
 {
@@ -97,8 +100,10 @@ abstract class TestCase extends Orchestra
         ]);
 
         $app['config']->set('media-collections', [
-            'public_disk' => 'media',
-            'private_disk' => 'media-private'
+            'public-disk' => 'media',
+            'private-disk' => 'media-private',
+
+            'auto-process' => true,
         ]);
 
         $app['config']->set('medialibrary.custom_url_generator_class', \Brackets\Media\UrlGenerator\LocalUrlGenerator::class);
@@ -175,5 +180,21 @@ abstract class TestCase extends Orchestra
     {
         $this->actingAs(new User);
         Gate::define('admin.upload', function ($user) { return true; });
+    }
+
+    protected function disableExceptionHandling()
+    {
+        $this->app->instance(ExceptionHandler::class, new class extends Handler {
+            public function __construct() {}
+
+            public function report(Exception $e)
+            {
+                // no-op
+            }
+
+            public function render($request, Exception $e) {
+                throw $e;
+            }
+        });
     }
 }

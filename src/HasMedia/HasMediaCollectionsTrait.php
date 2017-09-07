@@ -20,7 +20,8 @@ use Spatie\MediaLibrary\Media as MediaModel;
 trait HasMediaCollectionsTrait {
 
     use ParentHasMediaTrait;
-    // TODO after refactor, if the class is still too long, extract into sub-traits
+
+    protected $autoProcessMedia = true;
 
     /**
      * Collection of Media Collections
@@ -32,46 +33,38 @@ trait HasMediaCollectionsTrait {
     /**
      * Attaches and/or detaches all defined media collection to the model according to the $media
      *
-     * TODO explaing what it does - specify the structure used, note that it does validation first and after everything passes, it executes attaching (or detaching) the media
+     * This method proccess data from structure:
+     *
+     * $request = [
+     *      ...
+     *      'collectionName' => [
+     *          [
+     *              'id' => null,
+     *              'collection_name' => 'collectionName',
+     *              'model' => 'Brackets\Media\Test\TestModelWithCollections',
+     *              'path' => 'test.pdf',
+     *              'action' => 'add',
+     *              'meta_data' => [
+     *                  'name' => 'test',
+     *                  'width' => 200,
+     *                  'height' => 200,
+     *              ],
+     *          ],
+     *      ],
+     *      ...
+     * ];
+     *
+     * Firstly it validates input for max files count for mediaCollection, ile mimetype and file size, amd if the
+     * validation passes it will add/change/delete media object to model
      *
      * @param Collection $inputMedia
      */
     public function processMedia(Collection $inputMedia) {
-//        Original structure
-//        $request = [
-//            'files' => [
-//                [
-//                    'collection' => 'documents',
-//                    'name'       => 'test',
-//                    'width'      => 200,
-//                    'height'     => 200,
-//                    'model'      => 'Brackets\Media\Test\TestModelWithCollections',
-//                    'path'       => 'test.pdf',
-//                ],
-//            ],
-//        ];
-
-//        Changed structure
 //        Don't we want to use maybe some class to represent the data structure?
 //        Maybe what we want is a MediumOperation class, which holds {collection name, operation (detach, attach, replace), metadata, filepath)} what do you think?
-//        $request = [
-//            'documents' => [
-//                [
-//                    'id' => null,
-//                    'collection_name' => 'documents',
-//                    'model' => 'Brackets\Media\Test\TestModelWithCollections',
-//                    'path' => 'test.pdf',
-//                    'action' => 'add',
-//                    'meta_data' => [
-//                        'name' => 'test',
-//                        'width' => 200,
-//                        'height' => 200,
-//                    ],
-//                ],
-//            ],
-//        ];
 
         //First validate input
+//        dd($inputMedia);
         $this->getMediaCollections()->each(function($mediaCollection) use ($inputMedia) {
              $this->validate(collect($inputMedia->get($mediaCollection->getName())), $mediaCollection);
         });
@@ -84,9 +77,14 @@ trait HasMediaCollectionsTrait {
         });
     }
 
+    /**
+     * Process single file metadata add/edit/delete to media library
+     *
+     * @param $inputMedium
+     * @param $mediaCollection
+     */
     public function processMedium($inputMedium, $mediaCollection)
     {
-        //TODO refactore
         if (isset($inputMedium['id']) && $inputMedium['id']) {
             if($medium = app(MediaModel::class)->find($inputMedium['id'])) {
                 if (isset($inputMedium['action']) && $inputMedium['action'] == 'delete') {
@@ -96,41 +94,28 @@ trait HasMediaCollectionsTrait {
                     $medium->save();
                 }
             }
-        } else {
+        } else if (isset($inputMedium['action']) && $inputMedium['action'] == 'add') {
+            $mediumFileFullPath = Storage::disk('uploads')->getDriver()->getAdapter()->applyPathPrefix($inputMedium['path']);
 
-            // TODO this is really sick, it should be extracted in a method
-            $metaData = [];
-            if (isset($inputMedium['name'])) {
-                $metaData['name'] = $inputMedium['name'];
-            }
-            if (isset($inputMedium['file_name'])) {
-                $metaData['file_name'] = $inputMedium['file_name'];
-            }
-            if (isset($inputMedium['width'])) {
-                $metaData['width'] = $inputMedium['width'];
-            }
-            if (isset($inputMedium['height'])) {
-                $metaData['height'] = $inputMedium['height'];
-            }
-
-            // TODO extract "uploads" disk into config
-            $inputMedium = Storage::disk('uploads')->getDriver()->getAdapter()->applyPathPrefix($inputMedium['path']);
-
-            // TODO extract into validation phase
-            $this->validateSizeAndTypeOfFile($inputMedium, $collection);
-
-            $this->addMedia($inputMedium)
-                ->withCustomProperties($metaData)
-                ->toMediaCollection($collection->name, $collection->disk);
+            $this->addMedia($mediumFileFullPath)
+                ->withCustomProperties($inputMedium['meta_data'])
+                ->toMediaCollection($mediaCollection->getName(), $mediaCollection->getDisk());
         }
     }
 
+    /**
+     * Validae input data for media
+     *
+     * @param Collection $inputMediaForMediaCollection
+     * @param MediaCollection $mediaCollection
+     */
     public function validate(Collection $inputMediaForMediaCollection, MediaCollection $mediaCollection)
     {
         $this->validateCollectionMediaCount($inputMediaForMediaCollection, $mediaCollection);
         $inputMediaForMediaCollection->each(function($inputMedium) use ($mediaCollection) {
-            $this->validateTypeOfFile($inputMedium, $mediaCollection);
-            $this->validateSize($inputMedium, $mediaCollection);
+            $mediumFileFullPath = Storage::disk('uploads')->getDriver()->getAdapter()->applyPathPrefix($inputMedium['path']);
+            $this->validateTypeOfFile($mediumFileFullPath, $mediaCollection);
+            $this->validateSize($mediumFileFullPath, $mediaCollection);
         });
     }
 
@@ -142,11 +127,10 @@ trait HasMediaCollectionsTrait {
      */
     public function validateCollectionMediaCount(Collection $inputMediaForMediaCollection, MediaCollection $mediaCollection) {
 
-        // TODO do we want to throw an exception? If you have limit only one file per media collection, don't you usually want to automatically replace the current file with the new one?
         if ($mediaCollection->getMaxNumberOfFiles()) {
             $alreadyUploadedMediaCount = $this->getMedia($mediaCollection->getName())->count();
-            $forAddMediaCount = $inputMediaForMediaCollection->count(function($medium) { return $medium['action'] == 'add'; });
-            $forDeleteMediaCount = $inputMediaForMediaCollection->count(function($medium) { return $medium['action'] == 'delete'; });
+            $forAddMediaCount = $inputMediaForMediaCollection->filter(function($medium) { return $medium['action'] == 'add'; })->count();
+            $forDeleteMediaCount = $inputMediaForMediaCollection->filter(function($medium) { return $medium['action'] == 'delete' ? 1 : 0; })->count();
             $afterUploadCount = ($forAddMediaCount + $alreadyUploadedMediaCount - $forDeleteMediaCount);
 
             if ($afterUploadCount > $mediaCollection->getMaxNumberOfFiles()) {
@@ -161,9 +145,9 @@ trait HasMediaCollectionsTrait {
      * @throws FileCannotBeAdded/MimeTypeNotAllowed
      *
      */
-    public function validateTypeOfFile($inputMedium, $mediaCollection) {
+    public function validateTypeOfFile($mediumFileFullPath, $mediaCollection) {
         if ($mediaCollection->getAcceptedFileTypes()) {
-            $this->guardAgainstInvalidMimeType($inputMedium['path'], $mediaCollection->getAcceptedFileTypes());
+            $this->guardAgainstInvalidMimeType($mediumFileFullPath, $mediaCollection->getAcceptedFileTypes());
         }
     }
 
@@ -173,9 +157,9 @@ trait HasMediaCollectionsTrait {
      * @throws FileCannotBeAdded/FileIsTooBig
      *
      */
-    public function validateSize($inputMedium, $mediaCollection) {
+    public function validateSize($mediumFileFullPath, $mediaCollection) {
         if ($mediaCollection->getMaxFileSize()) {
-            $this->guardAgainstFileSizeLimit($inputMedium['path'], $mediaCollection->getMaxFileSize(), $mediaCollection->getName());
+            $this->guardAgainstFileSizeLimit($mediumFileFullPath, $mediaCollection->getMaxFileSize(), $mediaCollection->getName());
         }
     }
 
@@ -211,23 +195,16 @@ trait HasMediaCollectionsTrait {
         static::saving(function ($model) {
             /** @var self $model */
             if ($model->shouldAutoProcessMedia()) {
-                $request = request();
-
-                // FIXME what API should we expect? hard-coded files value or maybe according the collection name maybe?, so something like $model->processMedia(collect($request->only($model->getMediaCollections()->map->name)));
-                if ($request->has('files')) {
-                    $model->processMedia(collect($request->get('files')));
-                }
+                $model->processMedia(collect(request()->only($model->getMediaCollections()->map->getName()->toArray())));
             }
         });
     }
 
-    // TODO maybe we want to add an option to globally turn off auto process for whole app?
     protected function shouldAutoProcessMedia() {
-        if (property_exists($this, 'autoProcessMedia') && !!$this->autoProcessMedia) {
-            return false;
+        if (config('media-collections.auto-process') && property_exists($this, 'autoProcessMedia') && !!$this->autoProcessMedia) {
+            return true;
         }
-
-        return true;
+        return false;
     }
 
     protected function initMediaCollections() {
@@ -276,45 +253,5 @@ trait HasMediaCollectionsTrait {
      */
     public function getMediaCollection($name) : MediaCollection {
         return $this->mediaCollections->get($name);
-    }
-
-    // FIXME do we really want to have such filter? Anyone can filter it up very easily..
-    public function getImageMediaCollections() {
-        return $this->getMediaCollections()->filter->isImage();
-    }
-
-    // FIXME where this method should be?
-    public function getThumbsForCollection(string $collectionName) {
-        $collection = $this->getMediaCollection($collectionName);
-
-        // FIXME why this does not check if the Media Collection has the conversion, it only checks if conversion exists in general?
-        //FIXME: if image and thumb_200 doesnt exist throw exception to add thumb_200
-        if ($this->hasMediaConversion('thumb_200')) {
-            throw ThumbsDoesNotExists::thumbsConversionNotFound();
-        }
-
-        return $this->getMedia($collectionName)->map(function ($medium) use ($collection) {
-            return [
-                'id' => $medium->id,
-                'url' => $medium->getUrl(),
-                'thumb_url' => $collection->isImage() ? $medium->getUrl('thumb_200') : $medium->getUrl(),
-                'type' => $medium->mime_type,
-                'collection' => $collection->name,
-                'name' => $medium->hasCustomProperty('name') ? $medium->getCustomProperty('name') : $medium->file_name,
-                'size' => $medium->size
-            ];
-        });
-    }
-
-    //FIXME: this definitely shouldn't be here. Maybe it should not be anywhere :)
-    public function registerComponentThumbs() {
-        $this->getImageMediaCollections()->each(function ($collection) {
-            $this->addMediaConversion('thumb_200')
-                ->width(200)
-                ->height(200)
-                ->fit('crop', 200, 200)
-                ->optimize()
-                ->performOnCollections($collection->name);
-        });
     }
 }

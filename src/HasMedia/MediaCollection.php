@@ -2,8 +2,6 @@
 
 namespace Brackets\Media\HasMedia;
 
-use Exception;
-
 /**
  * @property-read string $name
  * @property-read string $disk
@@ -31,7 +29,7 @@ class MediaCollection  {
      */
     public function __construct(string $name) {
         $this->name = $name;
-        $this->disk = config('media-collections.public_disk', 'media');
+        $this->disk = config('media-collections.public-disk', 'media');
     }
 
     /**
@@ -40,16 +38,6 @@ class MediaCollection  {
      */
     public static function create(string $name) : self {
         return new static($name);
-    }
-
-    /**
-     * Set this collection contains an images. This allows the conversions functionality.
-     *
-     * @return $this
-     */
-    public function image() : self {
-        $this->isImage = true;
-        return $this;
     }
 
     /**
@@ -69,7 +57,7 @@ class MediaCollection  {
      * @return $this
      */
     public function private() : self {
-        $this->disk = config('media-collections.private_disk');
+        $this->disk = config('media-collections.private-disk');
         return $this;
     }
 
@@ -103,6 +91,11 @@ class MediaCollection  {
      */
     public function accepts(...$acceptedFileTypes) : self {
         $this->acceptedFileTypes = $acceptedFileTypes;
+        if(collect($this->acceptedFileTypes)->count() > 0) {
+            $this->isImage = collect($this->acceptedFileTypes)->reject(function($fileType) {
+                    return substr( $fileType, 0, 5 ) === "image";
+                })->count() == 0;
+        }
         return $this;
     }
 
@@ -132,15 +125,13 @@ class MediaCollection  {
         return $this;
     }
 
-    // TODO probably deprecated?
     public function isImage() {
         return $this->isImage;
     }
 
-    //TODO probably deprecated?
     //FIXME: metoda disk by mohla mat druhy nepovinny paramater private, ktory len nastavi interny flag na true. Aby sme vedeli presnejsie ci ide o private alebo nie
     public function isPrivate() {
-        return $this->disk == config('media-collections.private_disk');
+        return $this->disk == config('media-collections.private-disk');
     }
 
     /**

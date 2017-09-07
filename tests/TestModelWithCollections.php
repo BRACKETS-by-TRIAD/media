@@ -11,7 +11,6 @@ class TestModelWithCollections extends TestModel
     public function registerMediaCollections() {
 
         $this->addMediaCollection('gallery')
-             ->image() // only image can have conversions
              ->maxNumberOfFiles(20)
              ->maxFilesize(2*1024*1024)
              ->accepts('image/*');
@@ -22,7 +21,7 @@ class TestModelWithCollections extends TestModel
              ->canUpload('vop.upload')
              ->maxNumberOfFiles(20)
              ->maxFilesize(2*1024*1024)
-             ->accepts('application/pdf, application/msword');
+             ->accepts('application/pdf', 'application/msword');
 
         $this->addMediaCollection('zip')
             ->private()
@@ -38,7 +37,7 @@ class TestModelWithCollections extends TestModel
      *
      */
     public function registerMediaConversions(\Spatie\MediaLibrary\Media $media = null) {
-        $this->registerComponentThumbs();
+        $this->autoRegisterThumb200();
 
         $this->addMediaConversion('thumb')
              ->width(368)
