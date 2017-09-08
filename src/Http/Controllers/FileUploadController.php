@@ -20,6 +20,6 @@ class FileUploadController extends BaseController {
             return response()->json(['path' => $path], 200);
         }
 
-        return response()->json(trans('media.file.not-provided'), 422);
+        return response()->json(trans('brackets/media::media.file.not_provided'), 422);
     }
 }

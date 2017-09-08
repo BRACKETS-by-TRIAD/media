@@ -3,7 +3,6 @@
 namespace Brackets\Media\HasMedia;
 
 use Brackets\Media\Exceptions\Collections\MediaCollectionAlreadyDefined;
-use Brackets\Media\Exceptions\Collections\ThumbsDoesNotExists;
 use Brackets\Media\Exceptions\FileCannotBeAdded\FileIsTooBig;
 use Brackets\Media\Exceptions\FileCannotBeAdded\TooManyFiles;
 use Illuminate\Http\File;
@@ -134,7 +133,7 @@ trait HasMediaCollectionsTrait {
             $afterUploadCount = ($forAddMediaCount + $alreadyUploadedMediaCount - $forDeleteMediaCount);
 
             if ($afterUploadCount > $mediaCollection->getMaxNumberOfFiles()) {
-                throw TooManyFiles::create($afterUploadCount, $mediaCollection->getMaxNumberOfFiles(), $mediaCollection->getName());
+                throw TooManyFiles::create($mediaCollection->getMaxNumberOfFiles(), $mediaCollection->getName());
             }
         }
     }

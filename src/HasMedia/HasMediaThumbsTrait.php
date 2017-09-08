@@ -2,18 +2,7 @@
 
 namespace Brackets\Media\HasMedia;
 
-use Brackets\Media\Exceptions\Collections\MediaCollectionAlreadyDefined;
-use Brackets\Media\Exceptions\Collections\ThumbsDoesNotExists;
-use Brackets\Media\Exceptions\FileCannotBeAdded\FileIsTooBig;
-use Brackets\Media\Exceptions\FileCannotBeAdded\TooManyFiles;
-use Illuminate\Http\File;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 use Spatie\MediaLibrary\Conversion\ConversionCollection;
-use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded;
-use Spatie\MediaLibrary\HasMedia\HasMediaTrait as ParentHasMediaTrait;
-use Spatie\MediaLibrary\Media as MediaModel;
 
 /**
  * @property-read boolean $autoProcessMedia

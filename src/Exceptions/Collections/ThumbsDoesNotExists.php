@@ -8,6 +8,6 @@ class ThumbsDoesNotExists extends Exception
 {
     public static function thumbsConversionNotFound()
     {
-        return new static("Conversion with name thumb_200 not registered.");
+        return new static(trans('brackets/media::media.exceptions.thumbs_does_not_exists'));
     }
 }
