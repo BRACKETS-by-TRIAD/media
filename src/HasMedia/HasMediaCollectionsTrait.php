@@ -200,7 +200,7 @@ trait HasMediaCollectionsTrait {
     }
 
     protected function shouldAutoProcessMedia() {
-        if (config('media-collections.auto-process') && property_exists($this, 'autoProcessMedia') && !!$this->autoProcessMedia) {
+        if (config('media-collections.auto_process') && property_exists($this, 'autoProcessMedia') && !!$this->autoProcessMedia) {
             return true;
         }
         return false;

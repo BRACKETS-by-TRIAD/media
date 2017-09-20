@@ -29,7 +29,7 @@ class MediaCollection  {
      */
     public function __construct(string $name) {
         $this->name = $name;
-        $this->disk = config('media-collections.public-disk', 'media');
+        $this->disk = config('media-collections.public_disk', 'media');
     }
 
     /**
@@ -57,7 +57,7 @@ class MediaCollection  {
      * @return $this
      */
     public function private() : self {
-        $this->disk = config('media-collections.private-disk');
+        $this->disk = config('media-collections.private_disk');
         return $this;
     }
 
@@ -131,7 +131,7 @@ class MediaCollection  {
 
     //FIXME: metoda disk by mohla mat druhy nepovinny paramater private, ktory len nastavi interny flag na true. Aby sme vedeli presnejsie ci ide o private alebo nie
     public function isPrivate() {
-        return $this->disk == config('media-collections.private-disk');
+        return $this->disk == config('media-collections.private_disk');
     }
 
     /**

@@ -88,7 +88,7 @@ abstract class TestCase extends Orchestra
 
 
         // FIXME these config setting needs to have a look
-        $app['config']->set('filesystems.disks.media-private', [
+        $app['config']->set('filesystems.disks.media_private', [
 
             'driver' => 'local',
              'root' => $this->getMediaDirectory('storage'),
@@ -100,10 +100,10 @@ abstract class TestCase extends Orchestra
         ]);
 
         $app['config']->set('media-collections', [
-            'public-disk' => 'media',
-            'private-disk' => 'media-private',
+            'public_disk' => 'media',
+            'private_disk' => 'media_private',
 
-            'auto-process' => true,
+            'auto_process' => true,
         ]);
 
         $app['config']->set('medialibrary.custom_url_generator_class', \Brackets\Media\UrlGenerator\LocalUrlGenerator::class);
