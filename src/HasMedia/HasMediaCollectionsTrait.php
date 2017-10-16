@@ -112,9 +112,11 @@ trait HasMediaCollectionsTrait {
     {
         $this->validateCollectionMediaCount($inputMediaForMediaCollection, $mediaCollection);
         $inputMediaForMediaCollection->each(function($inputMedium) use ($mediaCollection) {
-            $mediumFileFullPath = Storage::disk('uploads')->getDriver()->getAdapter()->applyPathPrefix($inputMedium['path']);
-            $this->validateTypeOfFile($mediumFileFullPath, $mediaCollection);
-            $this->validateSize($mediumFileFullPath, $mediaCollection);
+            if($inputMedium['action'] == 'add') {
+                $mediumFileFullPath = Storage::disk('uploads')->getDriver()->getAdapter()->applyPathPrefix($inputMedium['path']);
+                $this->validateTypeOfFile($mediumFileFullPath, $mediaCollection);
+                $this->validateSize($mediumFileFullPath, $mediaCollection);
+            }
         });
     }
 
