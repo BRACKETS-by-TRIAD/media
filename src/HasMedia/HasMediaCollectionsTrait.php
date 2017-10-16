@@ -40,7 +40,6 @@ trait HasMediaCollectionsTrait {
      *          [
      *              'id' => null,
      *              'collection_name' => 'collectionName',
-     *              'model' => 'Brackets\Media\Test\TestModelWithCollections',
      *              'path' => 'test.pdf',
      *              'action' => 'add',
      *              'meta_data' => [

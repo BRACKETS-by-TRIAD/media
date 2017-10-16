@@ -51,7 +51,6 @@ class HasMediaCollectionsTest extends TestCase
             'documents' => [
                 [
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.pdf',
                     'action' => 'add',
                     'meta_data' => [
@@ -60,7 +59,6 @@ class HasMediaCollectionsTest extends TestCase
                 ],
                 [
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.docx',
                     'action' => 'add',
                     'meta_data' => [
@@ -71,7 +69,6 @@ class HasMediaCollectionsTest extends TestCase
             'video' => [
                 [
                     'collection_name' => 'video',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.zip',
                     'action' => 'add',
                     'meta_data' => [
@@ -101,7 +98,6 @@ class HasMediaCollectionsTest extends TestCase
             'documents' => [
                 [
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.pdf',
                     'action' => 'add',
                     'meta_data' => [
@@ -110,7 +106,6 @@ class HasMediaCollectionsTest extends TestCase
                 ],
                 [
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.docx',
                     'action' => 'add',
                     'meta_data' => [
@@ -136,7 +131,6 @@ class HasMediaCollectionsTest extends TestCase
             'documents' => [
                 [
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.pdf',
                     'action' => 'add',
                     'meta_data' => [
@@ -161,7 +155,6 @@ class HasMediaCollectionsTest extends TestCase
             'documents' => [
                 [
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.pdf',
                     'action' => 'add',
                     'meta_data' => [
@@ -188,7 +181,6 @@ class HasMediaCollectionsTest extends TestCase
             'documents' => [
                 [
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.psd',
                     'action' => 'add',
                     'meta_data' => [
@@ -212,7 +204,6 @@ class HasMediaCollectionsTest extends TestCase
             'documents' => [
                 [
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.pdf',
                     'action' => 'add',
                     'meta_data' => [
@@ -239,7 +230,6 @@ class HasMediaCollectionsTest extends TestCase
             'documents' => [
                 [
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.pdf',
                     'action' => 'add',
                     'meta_data' => [
@@ -248,7 +238,6 @@ class HasMediaCollectionsTest extends TestCase
                 ],
                 [
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.txt',
                     'action' => 'add',
                     'meta_data' => [
@@ -257,7 +246,6 @@ class HasMediaCollectionsTest extends TestCase
                 ],
                 [
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.docx',
                     'action' => 'add',
                     'meta_data' => [
@@ -284,7 +272,6 @@ class HasMediaCollectionsTest extends TestCase
             'documents' => [
                 [
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.pdf',
                     'action' => 'add',
                     'meta_data' => [
@@ -293,7 +280,6 @@ class HasMediaCollectionsTest extends TestCase
                 ],
                 [
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.txt',
                     'action' => 'add',
                     'meta_data' => [
@@ -315,7 +301,6 @@ class HasMediaCollectionsTest extends TestCase
             'documents' => [
                 [
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.docx',
                     'action' => 'add',
                     'meta_data' => [
@@ -342,7 +327,6 @@ class HasMediaCollectionsTest extends TestCase
             'documents' => [
                 [
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.pdf',
                     'action' => 'add',
                     'meta_data' => [
@@ -351,7 +335,6 @@ class HasMediaCollectionsTest extends TestCase
                 ],
                 [
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.txt',
                     'action' => 'add',
                     'meta_data' => [
@@ -379,7 +362,6 @@ class HasMediaCollectionsTest extends TestCase
             'documents' => [
                 [
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.psd',
                     'action' => 'add',
                     'meta_data' => [
@@ -404,7 +386,6 @@ class HasMediaCollectionsTest extends TestCase
             'documents' => [
                 [
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.txt',
                     'action' => 'add',
                     'meta_data' => [
@@ -429,7 +410,6 @@ class HasMediaCollectionsTest extends TestCase
             'gallery' => [
                 [
                     'collection_name' => 'gallery',
-                    'model' => 'Brackets\Media\Test\TestModelWithCollections',
                     'path' => 'test.jpg',
                     'action' => 'add',
                     'meta_data' => [
@@ -465,7 +445,6 @@ class HasMediaCollectionsTest extends TestCase
              'documents' => [
                  [
                      'collection_name' => 'documents',
-                     'model' => 'Brackets\Media\Test\TestModel',
                      'path' => 'test.pdf',
                      'action' => 'add',
                      'meta_data' => [
@@ -494,7 +473,6 @@ class HasMediaCollectionsTest extends TestCase
             'documents' => [
                 [
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModelWithCollections',
                     'path' => 'test.pdf',
                     'action' => 'add',
                     'meta_data' => [
@@ -516,7 +494,6 @@ class HasMediaCollectionsTest extends TestCase
             'zip' => [
                 [
                     'collection_name' => 'zip',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.zip',
                     'action' => 'add',
                     'meta_data' => [
@@ -549,7 +526,6 @@ class HasMediaCollectionsTest extends TestCase
             'documents' => [
                 [
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.pdf',
                     'action' => 'add',
                     'meta_data' => [
@@ -558,7 +534,6 @@ class HasMediaCollectionsTest extends TestCase
                 ],
                 [
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.txt',
                     'action' => 'add',
                     'meta_data' => [
@@ -578,7 +553,6 @@ class HasMediaCollectionsTest extends TestCase
                 [
                     'id' => $media->first()->id,
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.pdf',
                     'action' => 'delete',
                     'meta_data' => [
@@ -607,7 +581,6 @@ class HasMediaCollectionsTest extends TestCase
             'gallery' => [
                 [
                     'collection_name' => 'gallery',
-                    'model' => 'Brackets\Media\Test\TestModelWithCollections',
                     'path' => 'test.jpg',
                     'action' => 'add',
                     'meta_data' => [
@@ -634,7 +607,6 @@ class HasMediaCollectionsTest extends TestCase
             'documents' => [
                 [
                     'collection_name' => 'documents',
-                    'model' => 'Brackets\Media\Test\TestModel',
                     'path' => 'test.pdf',
                     'action' => 'add',
                     'meta_data' => [
