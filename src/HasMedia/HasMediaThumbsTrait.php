@@ -12,7 +12,11 @@ trait HasMediaThumbsTrait {
     public function getThumbs200ForCollection(string $mediaCollectionName) {
         $mediaCollection = $this->getMediaCollection($mediaCollectionName);
 
-        return $this->getMedia($mediaCollectionName)->filter(function($medium) use ($mediaCollectionName) {
+        return $this->getMedia($mediaCollectionName)->filter(function($medium) use ($mediaCollectionName, $mediaCollection) {
+            if(!$mediaCollection->isImage()) {
+                return true;
+            }
+
             return $conversions = ConversionCollection::createForMedia($medium)->filter(function($conversion) use ($mediaCollectionName) {
                     return $conversion->shouldBePerformedOn($mediaCollectionName);
                 })->filter(function($conversion) {
