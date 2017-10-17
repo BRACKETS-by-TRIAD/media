@@ -599,7 +599,7 @@ class HasMediaCollectionsTest extends TestCase
     }
 
     /** @test */
-    public function user_can_get_null_if_thumbs_not_registered()
+    public function user_can_get_file_if_thumbs_not_registered()
     {
         $this->assertCount(0, $this->testModelWithCollections->getMedia('gallery'));
 
@@ -619,7 +619,7 @@ class HasMediaCollectionsTest extends TestCase
         $this->testModelWithCollections->processMedia(collect($request->only($this->testModelWithCollections->getMediaCollections()->map->getName()->toArray())));
         $this->testModelWithCollections = $this->testModelWithCollections->fresh()->load('media');
 
-        $this->assertCount(0, $this->testModelWithCollections->getThumbs200ForCollection('documents'));
+        $this->assertCount(1, $this->testModelWithCollections->getThumbs200ForCollection('documents'));
     }
 
     /** @test */
