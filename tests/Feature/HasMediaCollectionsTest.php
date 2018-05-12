@@ -140,7 +140,7 @@ class HasMediaCollectionsTest extends TestCase
             ],
         ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(201);
 
         $media = $this->app['db']->connection()->table('media')->first();
 
@@ -164,7 +164,7 @@ class HasMediaCollectionsTest extends TestCase
             ],
         ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(201);
 
         $this->assertEmpty($this->app['db']->connection()->table('media')->first());
     }
@@ -482,7 +482,7 @@ class HasMediaCollectionsTest extends TestCase
             ],
         ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(201);
 
         $this->assertDatabaseHas($this->testModelWithCollections->getTable(), [ 'id' => 2, 'name' => 'Test small file', 'width' => null ]);
     }
