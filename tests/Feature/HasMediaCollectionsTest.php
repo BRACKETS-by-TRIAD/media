@@ -439,6 +439,7 @@ class HasMediaCollectionsTest extends TestCase
     /** @test */
     public function not_authorized_user_cannot_get_protected_media()
     {
+        $this->disableAuthorization();
         $this->assertCount(0, $this->testModelWithCollections->getMedia('documents'));
 
          $request = $this->getRequest([
@@ -461,7 +462,7 @@ class HasMediaCollectionsTest extends TestCase
 
         $this->assertCount(1, $media);
 
-        $response = $this->call('GET', $media->first()->getUrl());
+        $response = $this->json('GET', $media->first()->getUrl());
 
         $response->assertStatus(403);
     }

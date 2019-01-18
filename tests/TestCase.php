@@ -4,6 +4,7 @@ namespace Brackets\Media\Test;
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Exceptions\Handler;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
@@ -15,6 +16,8 @@ use Illuminate\Contracts\Debug\ExceptionHandler;
 
 abstract class TestCase extends Orchestra
 {
+    use RefreshDatabase;
+
     /** @var \Brackets\Media\Test\TestModel */
     protected $testModel;
 
@@ -62,7 +65,8 @@ abstract class TestCase extends Orchestra
     {
         return [
             \Spatie\MediaLibrary\MediaLibraryServiceProvider::class,
-            \Brackets\Media\MediaServiceProvider::class
+            \Brackets\Media\MediaServiceProvider::class,
+            \Brackets\AdminAuth\AdminAuthServiceProvider::class
         ];
     }
 
@@ -73,12 +77,28 @@ abstract class TestCase extends Orchestra
     {
         $this->initializeDirectory($this->getTempDirectory());
 
-        $app['config']->set('database.default', 'sqlite');
-        $app['config']->set('database.connections.sqlite', [
-            'driver' => 'sqlite',
-            'database' => ':memory:',
-            'prefix' => '',
-        ]);
+        if (env('DB_CONNECTION') === 'pgsql') {
+            $app['config']->set('database.default', 'pgsql');
+            $app['config']->set('database.connections.pgsql', [
+                'driver' => 'pgsql',
+                'host' => 'testing',
+                'port' => '5432',
+                'database' => 'homestead',
+                'username' => 'homestead',
+                'password' => 'secret',
+                'charset' => 'utf8',
+                'prefix' => '',
+                'schema' => 'public',
+                'sslmode' => 'prefer',
+            ]);
+        } else {
+            $app['config']->set('database.default', 'sqlite');
+            $app['config']->set('database.connections.sqlite', [
+                'driver' => 'sqlite',
+                'database' => ':memory:',
+                'prefix' => '',
+            ]);
+        }
 
         // FIXME these config setting needs to have a look
         $app['config']->set('filesystems.disks.media', [
@@ -119,6 +139,16 @@ abstract class TestCase extends Orchestra
         });
 
         $app['config']->set('app.key', '6rE9Nz59bGRbeMATftriyQjrpF7DcOQm');
+
+        $app['config']->set('admin-auth.defaults.guard', 'admin');
+        $app['config']->set('auth.guards.admin', [
+            'driver' => 'session',
+            'provider' => 'admin_users',
+        ]);
+        $app['config']->set('auth.providers.admin_users', [
+            'driver' => 'eloquent',
+            'model' => \Brackets\AdminAuth\Models\AdminUser::class,
+        ]);
     }
 
     /**
@@ -178,7 +208,8 @@ abstract class TestCase extends Orchestra
 
     public function disableAuthorization()
     {
-        $this->actingAs(new User);
+        $this->actingAs(new User, 'admin');
+        Gate::define('admin', function ($user) { return true; });
         Gate::define('admin.upload', function ($user) { return true; });
     }
 
