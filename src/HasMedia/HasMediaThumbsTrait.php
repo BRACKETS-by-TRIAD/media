@@ -11,7 +11,6 @@ trait HasMediaThumbsTrait {
 
 	public function getThumbs200ForCollection( string $mediaCollectionName ) {
 		$mediaCollection = $this->getMediaCollection( $mediaCollectionName );
-
 		return $this->getMedia( $mediaCollectionName )->filter( function ( $medium ) use ( $mediaCollectionName, $mediaCollection ) {
 			//We also want all files (PDF, Word, Excell etc.)
 			if ( ! $mediaCollection->isImage() ) {
@@ -24,7 +23,7 @@ trait HasMediaThumbsTrait {
 					return $conversion->getName() == 'thumb_200';
 				} )->count() > 0;
 		} )->map( function ( $medium ) use ( $mediaCollection ) {
-			return [
+            return [
 				'id'              => $medium->id,
 				'url'             => $medium->getUrl(),
 				'thumb_url'       => $mediaCollection->isImage() ? $medium->getUrl( 'thumb_200' ) : $medium->getUrl(),

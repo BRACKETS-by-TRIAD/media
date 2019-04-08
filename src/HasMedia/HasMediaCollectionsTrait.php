@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait as ParentHasMediaTrait;
-use Spatie\MediaLibrary\Media as MediaModel;
+use Spatie\MediaLibrary\Models\Media as MediaModel;
 
 /**
  * @property-read boolean $autoProcessMedia
@@ -27,7 +27,7 @@ trait HasMediaCollectionsTrait {
 	 *
 	 * @var Collection
 	 */
-	protected $mediaCollections;
+//	protected $mediaCollections;
 
 	/**
 	 * Attaches and/or detaches all defined media collection to the model according to the $media
@@ -219,6 +219,7 @@ trait HasMediaCollectionsTrait {
 	}
 
 	protected function initMediaCollections() {
+
 		$this->mediaCollections = collect();
 
 		$this->registerMediaCollections();
@@ -235,13 +236,16 @@ trait HasMediaCollectionsTrait {
 	 * @throws MediaCollectionAlreadyDefined
 	 */
 	public function addMediaCollection( $name ): MediaCollection {
-		if ( $this->mediaCollections->has( $name ) ) {
-			throw new MediaCollectionAlreadyDefined;
-		}
+
+//		if ($this->mediaCollections->has($name)) {
+//
+//		    throw new MediaCollectionAlreadyDefined;
+//		}
+//        echo 'test'; V starej verzii to zbehlo 6 krat, teraz 12.
 
 		$collection = MediaCollection::create( $name );
 
-		$this->mediaCollections->put( $name, $collection );
+        $this->mediaCollections->put( $name, $collection );
 
 		return $collection;
 	}
@@ -264,7 +268,8 @@ trait HasMediaCollectionsTrait {
 	 *
 	 * @return MediaCollection|null
 	 */
-	public function getMediaCollection( $name ): MediaCollection {
+	public function getMediaCollection( $name ): ?MediaCollection {
+
 		return $this->mediaCollections->get( $name );
 	}
 }
