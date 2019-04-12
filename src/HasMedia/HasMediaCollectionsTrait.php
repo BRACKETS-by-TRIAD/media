@@ -23,13 +23,6 @@ trait HasMediaCollectionsTrait {
 	protected $autoProcessMedia = true;
 
 	/**
-	 * Collection of Media Collections
-	 *
-	 * @var Collection
-	 */
-//	protected $mediaCollections;
-
-	/**
 	 * Attaches and/or detaches all defined media collection to the model according to the $media
 	 *
 	 * This method proccess data from structure:

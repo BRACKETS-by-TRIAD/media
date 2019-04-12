@@ -16,13 +16,10 @@ use Spatie\MediaLibrary\MediaCollection\MediaCollection as ParentMediaCollection
 
 class MediaCollection extends ParentMediaCollection
 {
-
-//	protected $name;
-//	protected $disk;
 	protected $isImage = false;
 	protected $maxNumberOfFiles;
 	protected $maxFileSize;
-//	protected $acceptedFileTypes;
+	protected $acceptedFileTypes;
 	protected $viewPermission;
 	protected $uploadPermission;
 
@@ -38,14 +35,6 @@ class MediaCollection extends ParentMediaCollection
 		$this->diskName = config( 'media-collections.public_disk', 'media' );
 	}
 
-//	/**
-//	 * @param string $name
-//	 *
-//	 * @return MediaCollection
-//	 */
-//	public static function create( string $name ): self {
-//		return new static( $name );
-//	}
 
 	/**
 	 * Specify a disk where to store this collection
@@ -105,7 +94,6 @@ class MediaCollection extends ParentMediaCollection
 	 * @return $this
 	 */
 
-//	NAOZAJ TO CHCEME ZMENIT?
 
 	public function accepts( ...$acceptedFileTypes ): self {
 		$this->acceptedFileTypes = $acceptedFileTypes;
