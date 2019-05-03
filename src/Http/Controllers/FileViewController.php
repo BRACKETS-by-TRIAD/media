@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
-use Spatie\MediaLibrary\Media as MediaModel;
+use Spatie\MediaLibrary\Models\Media as MediaModel;
 
 class FileViewController extends BaseController {
 
