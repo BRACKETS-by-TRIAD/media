@@ -2,6 +2,8 @@
 
 namespace Brackets\Media\HasMedia;
 
+use Spatie\MediaLibrary\MediaCollection\MediaCollection as ParentMediaCollection;
+
 /**
  * @property-read string $name
  * @property-read string $disk
@@ -12,10 +14,8 @@ namespace Brackets\Media\HasMedia;
  * @property-read string $uploadPermission
  */
 
-class MediaCollection {
-
-	protected $name;
-	protected $disk;
+class MediaCollection extends ParentMediaCollection
+{
 	protected $isImage = false;
 	protected $maxNumberOfFiles;
 	protected $maxFileSize;
@@ -29,28 +29,22 @@ class MediaCollection {
 	 * @param string $name
 	 */
 	public function __construct( string $name ) {
-		$this->name = $name;
-		$this->disk = config( 'media-collections.public_disk', 'media' );
+
+        parent::__construct($name);
+
+		$this->diskName = config( 'media-collections.public_disk', 'media' );
 	}
 
-	/**
-	 * @param string $name
-	 *
-	 * @return MediaCollection
-	 */
-	public static function create( string $name ): self {
-		return new static( $name );
-	}
 
 	/**
 	 * Specify a disk where to store this collection
 	 *
 	 * @param $disk
-	 *
-	 * @return $this
+     * @deprecated deprecated since version 3.0
+     * @return $this
 	 */
 	public function disk( $disk ): self {
-		$this->disk = $disk;
+		$this->diskName = $disk;
 
 		return $this;
 	}
@@ -61,7 +55,7 @@ class MediaCollection {
 	 * @return $this
 	 */
 	public function private(): self {
-		$this->disk = config( 'media-collections.private_disk' );
+		$this->diskName = config( 'media-collections.private_disk' );
 
 		return $this;
 	}
@@ -99,6 +93,8 @@ class MediaCollection {
 	 *
 	 * @return $this
 	 */
+
+
 	public function accepts( ...$acceptedFileTypes ): self {
 		$this->acceptedFileTypes = $acceptedFileTypes;
 		if ( collect( $this->acceptedFileTypes )->count() > 0 ) {
@@ -146,7 +142,7 @@ class MediaCollection {
 
 	//FIXME: metoda disk by mohla mat druhy nepovinny paramater private, ktory len nastavi interny flag na true. Aby sme vedeli presnejsie ci ide o private alebo nie
 	public function isPrivate() {
-		return $this->disk == config( 'media-collections.private_disk' );
+		return $this->diskName == config( 'media-collections.private_disk' );
 	}
 
 	/**
@@ -160,7 +156,7 @@ class MediaCollection {
 	 * @return mixed
 	 */
 	public function getDisk() {
-		return $this->disk;
+		return $this->diskName;
 	}
 
 	/**

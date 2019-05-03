@@ -2,7 +2,7 @@
 
 namespace Brackets\Media\HasMedia;
 
-use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
+use Spatie\MediaLibrary\HasMedia\HasMedia;
 
 interface HasMediaCollections extends HasMedia {
 
