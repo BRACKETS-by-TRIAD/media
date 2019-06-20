@@ -89,7 +89,7 @@ trait HasMediaCollectionsTrait {
 				if ( isset( $inputMedium['action'] ) && $inputMedium['action'] == 'delete' ) {
 					$medium->delete();
 				} else {
-					$medium->customProperties = $inputMedium['meta_data'];
+					$medium->custom_properties = $inputMedium['meta_data'];
 					$medium->save();
 				}
 			}
