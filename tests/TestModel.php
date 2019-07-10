@@ -9,9 +9,10 @@ use Illuminate\Database\Eloquent\Model;
 
 use Brackets\Media\HasMedia\HasMediaCollections;
 use Brackets\Media\HasMedia\HasMediaCollectionsTrait;
-use Spatie\MediaLibrary\HasMedia\Interfaces\HasMediaConversions;
+use Spatie\MediaLibrary\Models\Media;
 
-class TestModel extends Model implements HasMediaConversions, HasMediaCollections
+
+class TestModel extends Model implements HasMediaCollections
 {
     use HasMediaCollectionsTrait;
     use HasMediaThumbsTrait;
@@ -30,9 +31,9 @@ class TestModel extends Model implements HasMediaConversions, HasMediaCollection
 
     /**
      * Register the conversions that should be performed.
-     *
+     * @param Media|null $media
      */
-    public function registerMediaConversions(\Spatie\MediaLibrary\Media $media = null) {
+    public function registerMediaConversions(Media $media = null) {
         
     }
 }

@@ -2,6 +2,9 @@
 
 namespace Brackets\Media\Test;
 
+use Spatie\MediaLibrary\Models\Media;
+
+
 class TestModelWithCollections extends TestModel
 {
     /**
@@ -36,7 +39,7 @@ class TestModelWithCollections extends TestModel
      * Register the conversions that should be performed.
      *
      */
-    public function registerMediaConversions(\Spatie\MediaLibrary\Media $media = null) {
+    public function registerMediaConversions(Media $media = null) {
         $this->autoRegisterThumb200();
 
         $this->addMediaConversion('thumb')

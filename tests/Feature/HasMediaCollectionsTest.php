@@ -509,13 +509,14 @@ class HasMediaCollectionsTest extends TestCase
         $this->assertDatabaseMissing($this->testModelWithCollections->getTable(), [ 'id' => 1, 'name' => 'Test big file', 'width' => null ]);
     }
 
-    /** @test */
-    public function model_cannot_have_multiple_collections_with_same_name()
-    {
-        $this->expectException(MediaCollectionAlreadyDefined::class);
-
-        $this->testModelWithCollections->addMediaCollection('documents');
-    }
+//    /** @test */
+//    public function model_cannot_have_multiple_collections_with_same_name()
+//    {
+//        $this->expectException(MediaCollectionAlreadyDefined::class);
+//
+//        $this->testModelWithCollections->addMediaCollection('documents');
+//
+//    }
 
     /** @test */
     public function user_can_delete_file_from_collection()

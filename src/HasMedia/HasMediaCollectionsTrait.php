@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Validator;
 use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait as ParentHasMediaTrait;
 use Spatie\MediaLibrary\Models\Media as MediaModel;
+use Spatie\MediaLibrary\Models\Media;
 
 /**
  * @property-read boolean $autoProcessMedia
@@ -216,7 +217,37 @@ trait HasMediaCollectionsTrait {
 		$this->mediaCollections = collect();
 
 		$this->registerMediaCollections();
+
+//        V  RegisterAllMediaConversions sa to vola zas
 	}
+
+//    public function registerAllMediaConversions(Media $media = null)
+//    {
+//        if(empty($this->mediaCollections)){
+//            $this->registerMediaCollections();
+//        }
+//
+//        collect($this->mediaCollections)->each(function (MediaCollection $mediaCollection) use ($media) {
+//            $actualMediaConversions = $this->mediaConversions;
+//
+//            $this->mediaConversions = [];
+//
+//            ($mediaCollection->mediaConversionRegistrations)($media);
+//
+//            $preparedMediaConversions = collect($this->mediaConversions)
+//                ->each(function (Conversion $conversion) use ($mediaCollection) {
+//                    $conversion->performOnCollections($mediaCollection->name);
+//                })
+//                ->values()
+//                ->toArray();
+//
+//            $this->mediaConversions = array_merge($actualMediaConversions, $preparedMediaConversions);
+//
+//        });
+//
+//        $this->registerMediaConversions($media);
+//
+//    }
 
 	/**
 	 * Register new Media Collection
@@ -232,9 +263,11 @@ trait HasMediaCollectionsTrait {
 
 //		if ($this->mediaCollections->has($name)) {
 //
-//		    throw new MediaCollectionAlreadyDefined;
+//		    throw new MediaCollectionAlreadyDefined("Error in $name");
 //		}
-//        echo 'test'; V starej verzii to zbehlo 6 krat, teraz 12.
+
+//		V starej verzii to zbehlo 6 krat, teraz 12. Vola to aj FileAdder, vola to aj register Conversions,
+// pokazde sa to vola a preto asi nema zmysel chceckovat ci este nie su zaregistrovane. Nema to podla mna ani zmysel, vzdy sa len prepise kolekcia.
 
 		$collection = MediaCollection::create( $name );
 
