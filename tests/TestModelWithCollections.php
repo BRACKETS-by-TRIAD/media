@@ -4,15 +4,14 @@ namespace Brackets\Media\Test;
 
 use Spatie\MediaLibrary\Models\Media;
 
-
 class TestModelWithCollections extends TestModel
 {
     /**
      * Media collections
      *
      */
-    public function registerMediaCollections() {
-
+    public function registerMediaCollections()
+    {
         $this->addMediaCollection('gallery')
              ->maxNumberOfFiles(20)
              ->maxFilesize(2*1024*1024)
@@ -38,8 +37,10 @@ class TestModelWithCollections extends TestModel
     /**
      * Register the conversions that should be performed.
      *
+     * @param null|Media $media
      */
-    public function registerMediaConversions(Media $media = null) {
+    public function registerMediaConversions(Media $media = null)
+    {
         $this->autoRegisterThumb200();
 
         $this->addMediaConversion('thumb')

@@ -112,7 +112,7 @@ trait ProcessMediaTrait
                     $medium->save();
                 }
             }
-        } else if (isset($inputMedium['action']) && $inputMedium['action'] === 'add') {
+        } elseif (isset($inputMedium['action']) && $inputMedium['action'] === 'add') {
             $mediumFileFullPath = Storage::disk('uploads')->getDriver()->getAdapter()->applyPathPrefix($inputMedium['path']);
 
             $this->addMedia($mediumFileFullPath)
@@ -148,7 +148,6 @@ trait ProcessMediaTrait
      */
     public function validateCollectionMediaCount(Collection $inputMediaForMediaCollection, MediaCollection $mediaCollection): void
     {
-
         if ($mediaCollection->getMaxNumberOfFiles()) {
             $alreadyUploadedMediaCount = $this->getMedia($mediaCollection->getName())->count();
             $forAddMediaCount = $inputMediaForMediaCollection->filter(static function ($medium) {
@@ -188,8 +187,11 @@ trait ProcessMediaTrait
     public function validateSize(string $mediumFileFullPath, MediaCollection $mediaCollection): void
     {
         if ($mediaCollection->getMaxFileSize()) {
-            $this->guardAgainstFileSizeLimit($mediumFileFullPath, $mediaCollection->getMaxFileSize(),
-                $mediaCollection->getName());
+            $this->guardAgainstFileSizeLimit(
+                $mediumFileFullPath,
+                $mediaCollection->getMaxFileSize(),
+                $mediaCollection->getName()
+            );
         }
     }
 

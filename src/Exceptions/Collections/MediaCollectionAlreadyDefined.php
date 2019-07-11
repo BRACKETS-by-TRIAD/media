@@ -4,4 +4,6 @@ namespace Brackets\Media\Exceptions\Collections;
 
 use Exception;
 
-class MediaCollectionAlreadyDefined extends Exception {}
+class MediaCollectionAlreadyDefined extends Exception
+{
+}

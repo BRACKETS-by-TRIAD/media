@@ -31,7 +31,6 @@ class MediaCollection extends ParentMediaCollection
      */
     public function __construct(string $name)
     {
-
         parent::__construct($name);
 
         $this->diskName = config('media-collections.public_disk', 'media');
@@ -104,8 +103,8 @@ class MediaCollection extends ParentMediaCollection
         $this->acceptedFileTypes = $acceptedFileTypes;
         if (collect($this->acceptedFileTypes)->count() > 0) {
             $this->isImage = collect($this->acceptedFileTypes)->reject(static function ($fileType) {
-                    return strpos($fileType, 'image') === 0;
-                })->count() === 0;
+                return strpos($fileType, 'image') === 0;
+            })->count() === 0;
         }
 
         return $this;

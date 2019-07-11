@@ -12,42 +12,42 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\Models\Media as MediaModel;
 
-class FileViewController extends BaseController {
+class FileViewController extends BaseController
+{
+    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-	use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+    public function view(Request $request)
+    {
+        $this->validate($request, [
+            'path' => 'required|string'
+        ]);
 
-	public function view( Request $request ) {
-		$this->validate( $request, [
-			'path' => 'required|string'
-		] );
+        list($fileId) = explode("/", $request->get('path'), 2);
 
-		list( $fileId ) = explode( "/", $request->get( 'path' ), 2 );
+        if ($medium = app(MediaModel::class)->find($fileId)) {
 
-		if ( $medium = app( MediaModel::class )->find( $fileId ) ) {
+            /** @var HasMediaCollectionsTrait $model */
+            $model = $medium->model; // PHPStorm sees it as an error - Spatie should fix this using PHPDoc
 
-			/** @var HasMediaCollectionsTrait $model */
-			$model = $medium->model; // PHPStorm sees it as an error - Spatie should fix this using PHPDoc
+            if ($mediaCollection = $model->getMediaCollection($medium->collection_name)) {
+                if ($mediaCollection->getViewPermission()) {
+                    $this->authorize($mediaCollection->getViewPermission(), [ $model ]);
+                }
 
-			if ( $mediaCollection = $model->getMediaCollection( $medium->collection_name ) ) {
+                $storagePath = $request->get('path');
+                $fileSystem  = Storage::disk($mediaCollection->getDisk());
 
-				if ( $mediaCollection->getViewPermission() ) {
-					$this->authorize( $mediaCollection->getViewPermission(), [ $model ] );
-				}
+                if (! $fileSystem->has($storagePath)) {
+                    abort(404);
+                }
 
-				$storagePath = $request->get( 'path' );
-				$fileSystem  = Storage::disk( $mediaCollection->getDisk() );
+                return Response::make($fileSystem->get($storagePath), 200, [
+                    'Content-Type'        => $fileSystem->mimeType($storagePath),
+                    'Content-Disposition' => 'inline; filename="' . basename($request->get('path')) . '"'
+                ]);
+            }
+        }
 
-				if ( ! $fileSystem->has( $storagePath ) ) {
-					abort( 404 );
-				}
-
-				return Response::make( $fileSystem->get( $storagePath ), 200, [
-					'Content-Type'        => $fileSystem->mimeType( $storagePath ),
-					'Content-Disposition' => 'inline; filename="' . basename( $request->get( 'path' ) ) . '"'
-				] );
-			}
-		}
-
-		abort( 404 );
-	}
+        abort(404);
+    }
 }

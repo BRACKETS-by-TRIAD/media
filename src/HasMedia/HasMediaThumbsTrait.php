@@ -23,10 +23,10 @@ trait HasMediaThumbsTrait
             }
 
             return ConversionCollection::createForMedia($medium)->filter(static function ($conversion) use ($mediaCollectionName) {
-                    return $conversion->shouldBePerformedOn($mediaCollectionName);
-                })->filter(static function ($conversion) {
-                    return $conversion->getName() === 'thumb_200';
-                })->count() > 0;
+                return $conversion->shouldBePerformedOn($mediaCollectionName);
+            })->filter(static function ($conversion) {
+                return $conversion->getName() === 'thumb_200';
+            })->count() > 0;
         })->map(static function ($medium) use ($mediaCollection) {
             return [
                 'id' => $medium->id,

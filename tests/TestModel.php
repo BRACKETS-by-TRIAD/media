@@ -25,7 +25,6 @@ class TestModel extends Model implements HasMedia
      */
     public function registerMediaCollections()
     {
-
     }
 
     /**
@@ -35,6 +34,5 @@ class TestModel extends Model implements HasMedia
      */
     public function registerMediaConversions(Media $media = null)
     {
-
     }
 }
