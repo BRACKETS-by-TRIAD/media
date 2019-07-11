@@ -126,7 +126,7 @@ abstract class TestCase extends Orchestra
             'auto_process' => true,
         ]);
 
-        $app['config']->set('medialibrary.custom_url_generator_class', \Brackets\Media\UrlGenerator\LocalUrlGenerator::class);
+        $app['config']->set('medialibrary.url_generator', \Brackets\Media\UrlGenerator\LocalUrlGenerator::class);
 
         // FIXME these config setting needs to have a look
         $app->bind('path.public', function () {
