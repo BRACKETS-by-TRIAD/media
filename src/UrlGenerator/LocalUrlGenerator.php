@@ -12,9 +12,7 @@ class LocalUrlGenerator extends SpatieLocalUrlGenerator {
 
 			return route( 'brackets/media::view', [], false ) . '?path=' . $this->makeCompatibleForNonUnixHosts( $url );
 		} else {
-			$url = $this->getBaseMediaDirectory() . '/' . $this->getPathRelativeToRoot();
-
-			return $this->makeCompatibleForNonUnixHosts( $url );
+			return parent::getUrl();
 		}
 	}
 }
