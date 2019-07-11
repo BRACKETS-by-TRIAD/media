@@ -2,26 +2,31 @@
 
 namespace Brackets\Media\Test;
 
+use Brackets\AdminAuth\AdminAuthServiceProvider;
+use Brackets\AdminAuth\Models\AdminUser;
+use Brackets\Media\MediaServiceProvider;
+use Brackets\Media\UrlGenerator\LocalUrlGenerator;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Exceptions\Handler;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Auth\User;
 use Exception;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use Spatie\MediaLibrary\MediaLibraryServiceProvider;
 
 abstract class TestCase extends Orchestra
 {
     use RefreshDatabase;
 
-    /** @var \Brackets\Media\Test\TestModel */
+    /** @var TestModel */
     protected $testModel;
 
-    /** @var \Brackets\Media\Test\TestModelWithCollections */
+    /** @var TestModelWithCollections */
     protected $testModelWithCollections;
 
     public function setUp()
@@ -57,21 +62,21 @@ abstract class TestCase extends Orchestra
     }
 
     /**
-     * @param \Illuminate\Foundation\Application $app
+     * @param Application $app
      *
      * @return array
      */
     protected function getPackageProviders($app)
     {
         return [
-            \Spatie\MediaLibrary\MediaLibraryServiceProvider::class,
-            \Brackets\Media\MediaServiceProvider::class,
-            \Brackets\AdminAuth\AdminAuthServiceProvider::class
+            MediaLibraryServiceProvider::class,
+            MediaServiceProvider::class,
+            AdminAuthServiceProvider::class
         ];
     }
 
     /**
-     * @param \Illuminate\Foundation\Application $app
+     * @param Application $app
      */
     protected function getEnvironmentSetUp($app)
     {
@@ -126,7 +131,7 @@ abstract class TestCase extends Orchestra
             'auto_process' => true,
         ]);
 
-        $app['config']->set('medialibrary.url_generator', \Brackets\Media\UrlGenerator\LocalUrlGenerator::class);
+        $app['config']->set('medialibrary.url_generator', LocalUrlGenerator::class);
 
         // FIXME these config setting needs to have a look
         $app->bind('path.public', function () {
@@ -147,12 +152,12 @@ abstract class TestCase extends Orchestra
         ]);
         $app['config']->set('auth.providers.admin_users', [
             'driver' => 'eloquent',
-            'model' => \Brackets\AdminAuth\Models\AdminUser::class,
+            'model' => AdminUser::class,
         ]);
     }
 
     /**
-     * @param \Illuminate\Foundation\Application $app
+     * @param Application $app
      */
     protected function setUpDatabase($app)
     {
