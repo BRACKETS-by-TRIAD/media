@@ -1,11 +1,8 @@
 <?php namespace Brackets\Media\Test\Feature;
 
 use Brackets\Media\Test\TestCase;
-use Brackets\Media\Test\TestModelWithCollections;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Http\Request;
 
-use Brackets\Media\Exceptions\Collections\MediaCollectionAlreadyDefined;
 use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\MimeTypeNotAllowed;
 use Brackets\Media\Exceptions\FileCannotBeAdded\FileIsTooBig;
 use Brackets\Media\Exceptions\FileCannotBeAdded\TooManyFiles;
@@ -509,13 +506,13 @@ class HasMediaCollectionsTest extends TestCase
         $this->assertDatabaseMissing($this->testModelWithCollections->getTable(), [ 'id' => 1, 'name' => 'Test big file', 'width' => null ]);
     }
 
+    //FIXME With spatie collection, you can have multiple collection with same name
 //    /** @test */
 //    public function model_cannot_have_multiple_collections_with_same_name()
 //    {
 //        $this->expectException(MediaCollectionAlreadyDefined::class);
 //
 //        $this->testModelWithCollections->addMediaCollection('documents');
-//
 //    }
 
     /** @test */
