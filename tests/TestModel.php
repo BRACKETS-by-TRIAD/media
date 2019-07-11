@@ -2,12 +2,9 @@
 
 namespace Brackets\Media\Test;
 
+use Brackets\Media\HasMedia\HasMediaCollectionsTrait;
 use Brackets\Media\HasMedia\HasMediaThumbsTrait;
 use Illuminate\Database\Eloquent\Model;
-// use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
-// use Spatie\MediaLibrary\HasMedia\Interfaces\HasMediaConversions;
-
-use Brackets\Media\HasMedia\HasMediaCollectionsTrait;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\Models\Media;
 
