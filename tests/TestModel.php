@@ -7,12 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 // use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 // use Spatie\MediaLibrary\HasMedia\Interfaces\HasMediaConversions;
 
-use Brackets\Media\HasMedia\HasMediaCollections;
 use Brackets\Media\HasMedia\HasMediaCollectionsTrait;
+use Spatie\MediaLibrary\HasMedia\HasMedia;
 use Spatie\MediaLibrary\Models\Media;
 
 
-class TestModel extends Model implements HasMediaCollections
+class TestModel extends Model implements HasMedia
 {
     use HasMediaCollectionsTrait;
     use HasMediaThumbsTrait;
