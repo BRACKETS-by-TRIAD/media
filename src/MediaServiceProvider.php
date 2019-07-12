@@ -2,6 +2,8 @@
 
 namespace Brackets\Media;
 
+use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 class MediaServiceProvider extends ServiceProvider
@@ -13,11 +15,18 @@ class MediaServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+        if (app(Router::class)->hasMiddlewareGroup('admin')) {
+            Route::middleware(['web', 'admin'])
+                ->group(__DIR__ . '/../routes/web.php');
+        } else {
+            Route::middleware(['web'])
+                ->group(__DIR__ . '/../routes/web.php');
+        }
+
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__ . '/../install-stubs/config/media-collections.php' => config_path('media-collections.php')
+                __DIR__ . '/../install-stubs/config/media-collections.php' => config_path('media-collections.php'),
             ], 'config');
         }
     }
@@ -38,6 +47,21 @@ class MediaServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             __DIR__ . '/../install-stubs/config/media-collections.php',
             'media-collections'
+        );
+
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/admin-auth.php',
+            'admin-auth.defaults'
+        );
+
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/auth.guard.admin.php',
+            'auth.guards.admin'
+        );
+
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/auth.providers.admin_users.php',
+            'auth.providers.admin_users'
         );
     }
 }
