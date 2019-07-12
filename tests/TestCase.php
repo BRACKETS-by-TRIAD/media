@@ -69,7 +69,6 @@ abstract class TestCase extends Orchestra
         return [
             MediaLibraryServiceProvider::class,
             MediaServiceProvider::class,
-//            AdminAuthServiceProvider::class
         ];
     }
 
