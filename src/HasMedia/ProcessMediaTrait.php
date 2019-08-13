@@ -17,35 +17,6 @@ use Spatie\MediaLibrary\Models\Media as MediaModel;
  */
 trait ProcessMediaTrait
 {
-    protected $autoProcessMedia = true;
-
-    /**
-     * Setup to auto process during saving
-     */
-    public static function bootHasMediaCollectionsTrait(): void
-    {
-        static::saving(static function ($model) {
-            /** @var self $model */
-            if ($model->shouldAutoProcessMedia()) {
-                $model->processMedia(collect(request()->only($model->getMediaCollections()->map->getName()->toArray())));
-            }
-        });
-    }
-
-    /**
-     * Check if auto processing is on
-     *
-     * @return bool
-     */
-    protected function shouldAutoProcessMedia(): bool
-    {
-        if (config('media-collections.auto_process') && property_exists($this, 'autoProcessMedia') && (bool)$this->autoProcessMedia) {
-            return true;
-        }
-
-        return false;
-    }
-
     /**
      * Attaches and/or detaches all defined media collection to the model according to the $media
      *
@@ -146,8 +117,10 @@ trait ProcessMediaTrait
      * @param Collection $inputMediaForMediaCollection
      * @param MediaCollection $mediaCollection
      */
-    public function validateCollectionMediaCount(Collection $inputMediaForMediaCollection, MediaCollection $mediaCollection): void
-    {
+    public function validateCollectionMediaCount(
+        Collection $inputMediaForMediaCollection,
+        MediaCollection $mediaCollection
+    ): void {
         if ($mediaCollection->getMaxNumberOfFiles()) {
             $alreadyUploadedMediaCount = $this->getMedia($mediaCollection->getName())->count();
             $forAddMediaCount = $inputMediaForMediaCollection->filter(static function ($medium) {
