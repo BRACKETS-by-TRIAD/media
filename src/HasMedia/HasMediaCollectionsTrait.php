@@ -2,6 +2,7 @@
 
 namespace Brackets\Media\HasMedia;
 
+use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait as ParentHasMediaTrait;
 
 trait HasMediaCollectionsTrait
@@ -24,5 +25,29 @@ trait HasMediaCollectionsTrait
         $this->mediaCollections[] = $mediaCollection;
 
         return $mediaCollection;
+    }
+
+    /**
+     * Returns a collection of Media Collections
+     *
+     * @return Collection
+     */
+    public function getMediaCollections(): Collection
+    {
+        return collect($this->mediaCollections)->keyBy('name');
+    }
+
+    /**
+     * Returns a Media Collection according to the name
+     *
+     * If Media Collection was not registered on this model, null is returned
+     *
+     * @param $name
+     *
+     * @return MediaCollection|null
+     */
+    public function getMediaCollection($name): ?MediaCollection
+    {
+        return $this->getMediaCollections()->get($name);
     }
 }
