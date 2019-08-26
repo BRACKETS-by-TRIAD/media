@@ -2,13 +2,13 @@
 
 namespace Brackets\Media\Test;
 
-use Brackets\Media\HasMedia\HasMediaThumbsTrait;
-use Illuminate\Database\Eloquent\Model;
+use Brackets\Media\HasMedia\HasMediaCollections;
+use Brackets\Media\HasMedia\HasMediaCollectionsTrait;
 // use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 // use Spatie\MediaLibrary\HasMedia\Interfaces\HasMediaConversions;
 
-use Brackets\Media\HasMedia\HasMediaCollections;
-use Brackets\Media\HasMedia\HasMediaCollectionsTrait;
+use Brackets\Media\HasMedia\HasMediaThumbsTrait;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia\Interfaces\HasMediaConversions;
 
 class TestModel extends Model implements HasMediaConversions, HasMediaCollections
@@ -24,15 +24,16 @@ class TestModel extends Model implements HasMediaConversions, HasMediaCollection
      * Media collections
      *
      */
-    public function registerMediaCollections() {
-        
+    public function registerMediaCollections()
+    {
     }
 
     /**
      * Register the conversions that should be performed.
      *
+     * @param null|\Spatie\MediaLibrary\Media $media
      */
-    public function registerMediaConversions(\Spatie\MediaLibrary\Media $media = null) {
-        
+    public function registerMediaConversions(\Spatie\MediaLibrary\Media $media = null)
+    {
     }
 }

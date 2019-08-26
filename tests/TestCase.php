@@ -2,17 +2,16 @@
 
 namespace Brackets\Media\Test;
 
+use Exception;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Foundation\Exceptions\Handler;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Foundation\Auth\User;
-use Exception;
-use Illuminate\Contracts\Debug\ExceptionHandler;
 
 abstract class TestCase extends Orchestra
 {
@@ -35,7 +34,7 @@ abstract class TestCase extends Orchestra
         $this->testModelWithCollections = TestModelWithCollections::first();
 
         // let's define simple routes
-        $this->app['router']->post('/test-model/create', function(Request $request){
+        $this->app['router']->post('/test-model/create', function (Request $request) {
             $sanitized = $request->only([
                 'name',
             ]);
@@ -45,7 +44,7 @@ abstract class TestCase extends Orchestra
             return $testModel;
         });
 
-        $this->app['router']->post('/test-model-disabled/create', function(Request $request){
+        $this->app['router']->post('/test-model-disabled/create', function (Request $request) {
             $sanitized = $request->only([
                 'name',
             ]);
@@ -209,21 +208,28 @@ abstract class TestCase extends Orchestra
     public function disableAuthorization()
     {
         $this->actingAs(new User, 'admin');
-        Gate::define('admin', function ($user) { return true; });
-        Gate::define('admin.upload', function ($user) { return true; });
+        Gate::define('admin', function ($user) {
+            return true;
+        });
+        Gate::define('admin.upload', function ($user) {
+            return true;
+        });
     }
 
     protected function disableExceptionHandling()
     {
         $this->app->instance(ExceptionHandler::class, new class extends Handler {
-            public function __construct() {}
+            public function __construct()
+            {
+            }
 
             public function report(Exception $e)
             {
                 // no-op
             }
 
-            public function render($request, Exception $e) {
+            public function render($request, Exception $e)
+            {
                 throw $e;
             }
         });
