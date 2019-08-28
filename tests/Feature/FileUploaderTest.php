@@ -1,4 +1,6 @@
-<?php namespace Brackets\Media\Test\Feature;
+<?php
+
+namespace Brackets\Media\Test\Feature;
 
 use Brackets\Media\Test\TestCase;
 use Illuminate\Http\UploadedFile;
@@ -14,7 +16,7 @@ class FileUploaderTest extends TestCase
             'name'      => 'test',
             'path'      => $this->getTestFilesDirectory('test.psd'),
         ];
-        $file = new UploadedFile($data['path'], $data['name'], 'image/jpeg', filesize($data['path']) , null, true);
+        $file = new UploadedFile($data['path'], $data['name'], 'image/jpeg', filesize($data['path']), null, true);
         $response = $this->call('POST', 'upload', $data, [], ['file' => $file], [], []);
 
         $response->assertStatus(200);
@@ -22,10 +24,9 @@ class FileUploaderTest extends TestCase
     }
 
 //    /** @test */
-    public function unauthorized_user_cannot_upload_file() {
+    public function unauthorized_user_cannot_upload_file()
+    {
 //        TODO
         return true;
     }
-
-
 }
