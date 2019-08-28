@@ -2,15 +2,19 @@
 
 namespace Brackets\Media\Test;
 
+use Brackets\Media\HasMedia\AutoProcessMediaTrait;
+use Spatie\Image\Exceptions\InvalidManipulation;
 use Spatie\MediaLibrary\Models\Media;
 
 class TestModelWithCollections extends TestModel
 {
+    use AutoProcessMediaTrait;
+
     /**
      * Media collections
      *
      */
-    public function registerMediaCollections()
+    public function registerMediaCollections(): void
     {
         $this->addMediaCollection('gallery')
              ->maxNumberOfFiles(20)
@@ -38,8 +42,9 @@ class TestModelWithCollections extends TestModel
      * Register the conversions that should be performed.
      *
      * @param null|Media $media
+     * @throws InvalidManipulation
      */
-    public function registerMediaConversions(Media $media = null)
+    public function registerMediaConversions(Media $media = null): void
     {
         $this->autoRegisterThumb200();
 
