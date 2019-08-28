@@ -2,8 +2,6 @@
 
 namespace Brackets\Media\Test;
 
-use Brackets\AdminAuth\AdminAuthServiceProvider;
-use Brackets\AdminAuth\Models\AdminUser;
 use Brackets\Media\MediaServiceProvider;
 use Brackets\Media\UrlGenerator\LocalUrlGenerator;
 use Exception;
@@ -29,7 +27,7 @@ abstract class TestCase extends Orchestra
     /** @var TestModelWithCollections */
     protected $testModelWithCollections;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -71,7 +69,6 @@ abstract class TestCase extends Orchestra
         return [
             MediaLibraryServiceProvider::class,
             MediaServiceProvider::class,
-            AdminAuthServiceProvider::class
         ];
     }
 
@@ -144,16 +141,6 @@ abstract class TestCase extends Orchestra
         });
 
         $app['config']->set('app.key', '6rE9Nz59bGRbeMATftriyQjrpF7DcOQm');
-
-        $app['config']->set('admin-auth.defaults.guard', 'admin');
-        $app['config']->set('auth.guards.admin', [
-            'driver' => 'session',
-            'provider' => 'admin_users',
-        ]);
-        $app['config']->set('auth.providers.admin_users', [
-            'driver' => 'eloquent',
-            'model' => AdminUser::class,
-        ]);
     }
 
     /**
