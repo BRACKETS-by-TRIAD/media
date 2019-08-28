@@ -42,7 +42,7 @@ class MediaCollection extends ParentMediaCollection
      *
      * @param $disk
      * @return $this
-     * @deprecated deprecated since version 3.0
+     * @deprecated deprecated since version 3.0, remove in version 4.0
      */
     public function disk($disk): self
     {
