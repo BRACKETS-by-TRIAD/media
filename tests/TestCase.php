@@ -113,7 +113,7 @@ abstract class TestCase extends Orchestra
         $app['config']->set('filesystems.disks.media_private', [
 
             'driver' => 'local',
-             'root' => $this->getMediaDirectory('storage'),
+            'root' => $this->getMediaDirectory('storage'),
         ]);
 
         $app['config']->set('filesystems.disks.uploads', [
@@ -166,11 +166,14 @@ abstract class TestCase extends Orchestra
     {
         $this->initializeDirectory($this->getTestFilesDirectory());
         $this->initializeDirectory($this->getUploadsDirectory());
-        File::copyDirectory(__DIR__.'/testfiles', $this->getTestFilesDirectory());
-        File::copyDirectory(__DIR__.'/testfiles', $this->getUploadsDirectory());
+        File::copyDirectory(__DIR__ . '/testfiles', $this->getTestFilesDirectory());
+        File::copyDirectory(__DIR__ . '/testfiles', $this->getUploadsDirectory());
     }
 
-    protected function initializeDirectory($directory)
+    /**
+     * @param $directory
+     */
+    protected function initializeDirectory($directory): void
     {
         if (File::isDirectory($directory)) {
             File::deleteDirectory($directory);
@@ -178,40 +181,63 @@ abstract class TestCase extends Orchestra
         File::makeDirectory($directory);
     }
 
-    public function getTempDirectory($suffix = '')
+    /**
+     * @param string $suffix
+     * @return string
+     */
+    public function getTempDirectory($suffix = ''): string
     {
-        return __DIR__.'/temp'.($suffix == '' ? '' : '/'.$suffix);
+        return __DIR__ . '/temp' . ($suffix === '' ? '' : '/' . $suffix);
     }
 
-    public function getMediaDirectory($suffix = '')
+    /**
+     * @param string $suffix
+     * @return string
+     */
+    public function getMediaDirectory($suffix = ''): string
     {
-        return $this->getTempDirectory('media').($suffix == '' ? '' : '/'.$suffix);
+        return $this->getTempDirectory('media') . ($suffix === '' ? '' : '/' . $suffix);
     }
 
-    public function getUploadsDirectory($suffix = '')
+    /**
+     * @param string $suffix
+     * @return string
+     */
+    public function getUploadsDirectory($suffix = ''): string
     {
-        return $this->getTempDirectory('uploads').($suffix == '' ? '' : '/'.$suffix);
+        return $this->getTempDirectory('uploads') . ($suffix === '' ? '' : '/' . $suffix);
     }
 
-    public function getTestFilesDirectory($suffix = '')
+    /**
+     * @param string $suffix
+     * @return string
+     */
+    public function getTestFilesDirectory($suffix = ''): string
     {
-        return $this->getTempDirectory('app').($suffix == '' ? '' : '/'.$suffix);
+        return $this->getTempDirectory('app') . ($suffix === '' ? '' : '/' . $suffix);
     }
 
-    public function disableAuthorization()
+    /**
+     * Disable authorization
+     */
+    public function disableAuthorization(): void
     {
         $this->actingAs(new User, 'admin');
-        Gate::define('admin', function ($user) {
+        Gate::define('admin', static function ($user) {
             return true;
         });
-        Gate::define('admin.upload', function ($user) {
+        Gate::define('admin.upload', static function ($user) {
             return true;
         });
     }
 
-    protected function disableExceptionHandling()
+    /**
+     * Disable exception handling
+     */
+    protected function disableExceptionHandling(): void
     {
-        $this->app->instance(ExceptionHandler::class, new class extends Handler {
+        $this->app->instance(ExceptionHandler::class, new class extends Handler
+        {
             public function __construct()
             {
             }

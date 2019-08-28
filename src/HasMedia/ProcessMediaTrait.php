@@ -116,6 +116,7 @@ trait ProcessMediaTrait
      *
      * @param Collection $inputMediaForMediaCollection
      * @param MediaCollection $mediaCollection
+     * @throws TooManyFiles
      */
     public function validateCollectionMediaCount(
         Collection $inputMediaForMediaCollection,
@@ -174,6 +175,7 @@ trait ProcessMediaTrait
      * @param string $filePath
      * @param float $maxFileSize
      * @param string $name
+     * @throws FileIsTooBig
      */
     protected function guardAgainstFileSizeLimit(string $filePath, float $maxFileSize, string $name): void
     {

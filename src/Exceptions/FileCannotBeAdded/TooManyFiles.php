@@ -6,8 +6,14 @@ use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded;
 
 class TooManyFiles extends FileCannotBeAdded
 {
-    public static function create($maxFileCount, $collectionName)
+    /**
+     * @param int|null $maxFileCount
+     * @param string|null $collectionName
+     * @return TooManyFiles
+     */
+    public static function create(int $maxFileCount = null, string $collectionName = null): TooManyFiles
     {
-        return new static(trans('brackets/media::media.exceptions.too_many_files', ['collectionName' => $collectionName, 'maxFileCount' => $maxFileCount]));
+        return new static(trans('brackets/media::media.exceptions.too_many_files',
+            ['collectionName' => $collectionName, 'maxFileCount' => $maxFileCount]));
     }
 }
