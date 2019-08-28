@@ -2,29 +2,32 @@
 
 namespace Brackets\Media\Test;
 
+use Brackets\Media\MediaServiceProvider;
+use Brackets\Media\UrlGenerator\LocalUrlGenerator;
+use Exception;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Foundation\Exceptions\Handler;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Foundation\Auth\User;
-use Exception;
-use Illuminate\Contracts\Debug\ExceptionHandler;
+use Spatie\MediaLibrary\MediaLibraryServiceProvider;
 
 abstract class TestCase extends Orchestra
 {
     use RefreshDatabase;
 
-    /** @var \Brackets\Media\Test\TestModel */
+    /** @var TestModel */
     protected $testModel;
 
-    /** @var \Brackets\Media\Test\TestModelWithCollections */
+    /** @var TestModelWithCollections */
     protected $testModelWithCollections;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -35,7 +38,7 @@ abstract class TestCase extends Orchestra
         $this->testModelWithCollections = TestModelWithCollections::first();
 
         // let's define simple routes
-        $this->app['router']->post('/test-model/create', function(Request $request){
+        $this->app['router']->post('/test-model/create', function (Request $request) {
             $sanitized = $request->only([
                 'name',
             ]);
@@ -45,7 +48,7 @@ abstract class TestCase extends Orchestra
             return $testModel;
         });
 
-        $this->app['router']->post('/test-model-disabled/create', function(Request $request){
+        $this->app['router']->post('/test-model-disabled/create', function (Request $request) {
             $sanitized = $request->only([
                 'name',
             ]);
@@ -57,21 +60,20 @@ abstract class TestCase extends Orchestra
     }
 
     /**
-     * @param \Illuminate\Foundation\Application $app
+     * @param Application $app
      *
      * @return array
      */
     protected function getPackageProviders($app)
     {
         return [
-            \Spatie\MediaLibrary\MediaLibraryServiceProvider::class,
-            \Brackets\Media\MediaServiceProvider::class,
-            \Brackets\AdminAuth\AdminAuthServiceProvider::class
+            MediaLibraryServiceProvider::class,
+            MediaServiceProvider::class,
         ];
     }
 
     /**
-     * @param \Illuminate\Foundation\Application $app
+     * @param Application $app
      */
     protected function getEnvironmentSetUp($app)
     {
@@ -111,7 +113,7 @@ abstract class TestCase extends Orchestra
         $app['config']->set('filesystems.disks.media_private', [
 
             'driver' => 'local',
-             'root' => $this->getMediaDirectory('storage'),
+            'root' => $this->getMediaDirectory('storage'),
         ]);
 
         $app['config']->set('filesystems.disks.uploads', [
@@ -126,7 +128,7 @@ abstract class TestCase extends Orchestra
             'auto_process' => true,
         ]);
 
-        $app['config']->set('medialibrary.custom_url_generator_class', \Brackets\Media\UrlGenerator\LocalUrlGenerator::class);
+        $app['config']->set('medialibrary.url_generator', LocalUrlGenerator::class);
 
         // FIXME these config setting needs to have a look
         $app->bind('path.public', function () {
@@ -139,20 +141,10 @@ abstract class TestCase extends Orchestra
         });
 
         $app['config']->set('app.key', '6rE9Nz59bGRbeMATftriyQjrpF7DcOQm');
-
-        $app['config']->set('admin-auth.defaults.guard', 'admin');
-        $app['config']->set('auth.guards.admin', [
-            'driver' => 'session',
-            'provider' => 'admin_users',
-        ]);
-        $app['config']->set('auth.providers.admin_users', [
-            'driver' => 'eloquent',
-            'model' => \Brackets\AdminAuth\Models\AdminUser::class,
-        ]);
     }
 
     /**
-     * @param \Illuminate\Foundation\Application $app
+     * @param Application $app
      */
     protected function setUpDatabase($app)
     {
@@ -174,11 +166,14 @@ abstract class TestCase extends Orchestra
     {
         $this->initializeDirectory($this->getTestFilesDirectory());
         $this->initializeDirectory($this->getUploadsDirectory());
-        File::copyDirectory(__DIR__.'/testfiles', $this->getTestFilesDirectory());
-        File::copyDirectory(__DIR__.'/testfiles', $this->getUploadsDirectory());
+        File::copyDirectory(__DIR__ . '/testfiles', $this->getTestFilesDirectory());
+        File::copyDirectory(__DIR__ . '/testfiles', $this->getUploadsDirectory());
     }
 
-    protected function initializeDirectory($directory)
+    /**
+     * @param $directory
+     */
+    protected function initializeDirectory($directory): void
     {
         if (File::isDirectory($directory)) {
             File::deleteDirectory($directory);
@@ -186,44 +181,74 @@ abstract class TestCase extends Orchestra
         File::makeDirectory($directory);
     }
 
-    public function getTempDirectory($suffix = '')
+    /**
+     * @param string $suffix
+     * @return string
+     */
+    public function getTempDirectory($suffix = ''): string
     {
-        return __DIR__.'/temp'.($suffix == '' ? '' : '/'.$suffix);
+        return __DIR__ . '/temp' . ($suffix === '' ? '' : '/' . $suffix);
     }
 
-    public function getMediaDirectory($suffix = '')
+    /**
+     * @param string $suffix
+     * @return string
+     */
+    public function getMediaDirectory($suffix = ''): string
     {
-        return $this->getTempDirectory('media').($suffix == '' ? '' : '/'.$suffix);
+        return $this->getTempDirectory('media') . ($suffix === '' ? '' : '/' . $suffix);
     }
 
-    public function getUploadsDirectory($suffix = '')
+    /**
+     * @param string $suffix
+     * @return string
+     */
+    public function getUploadsDirectory($suffix = ''): string
     {
-        return $this->getTempDirectory('uploads').($suffix == '' ? '' : '/'.$suffix);
+        return $this->getTempDirectory('uploads') . ($suffix === '' ? '' : '/' . $suffix);
     }
 
-    public function getTestFilesDirectory($suffix = '')
+    /**
+     * @param string $suffix
+     * @return string
+     */
+    public function getTestFilesDirectory($suffix = ''): string
     {
-        return $this->getTempDirectory('app').($suffix == '' ? '' : '/'.$suffix);
+        return $this->getTempDirectory('app') . ($suffix === '' ? '' : '/' . $suffix);
     }
 
-    public function disableAuthorization()
+    /**
+     * Disable authorization
+     */
+    public function disableAuthorization(): void
     {
         $this->actingAs(new User, 'admin');
-        Gate::define('admin', function ($user) { return true; });
-        Gate::define('admin.upload', function ($user) { return true; });
+        Gate::define('admin', static function ($user) {
+            return true;
+        });
+        Gate::define('admin.upload', static function ($user) {
+            return true;
+        });
     }
 
-    protected function disableExceptionHandling()
+    /**
+     * Disable exception handling
+     */
+    protected function disableExceptionHandling(): void
     {
-        $this->app->instance(ExceptionHandler::class, new class extends Handler {
-            public function __construct() {}
+        $this->app->instance(ExceptionHandler::class, new class extends Handler
+        {
+            public function __construct()
+            {
+            }
 
             public function report(Exception $e)
             {
                 // no-op
             }
 
-            public function render($request, Exception $e) {
+            public function render($request, Exception $e)
+            {
                 throw $e;
             }
         });
