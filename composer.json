@@ -14,29 +14,29 @@
         {
             "name": "Pavol Perdík",
             "email": "pavol.perdik@brackets.sk",
-            "homepage": "https://www.brackets.sk/en",
+            "homepage": "https://www.brackets.sk",
             "role": "Developer"
         },
         {
             "name": "Marek Kratochvíla",
             "email": "marek.kratochvila@brackets.sk",
-            "homepage": "https://www.brackets.sk/en",
+            "homepage": "https://www.brackets.sk",
             "role": "Developer"
         },
         {
             "name": "David Běhal",
             "email": "david.behal@brackets.sk",
-            "homepage": "https://www.brackets.sk/en",
+            "homepage": "https://www.brackets.sk",
             "role": "Developer"
         }
     ],
     "require": {
-        "php": "^7.2",
-        "illuminate/support": "~6.0",
+        "php": "^7.2.5",
+        "illuminate/support": "^6.0|^7.0",
         "spatie/laravel-medialibrary": "^7.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~8.0",
+        "phpunit/phpunit": "^8.5",
         "orchestra/testbench": "~4.0"
     },
     "autoload": {
