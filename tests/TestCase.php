@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Throwable;
 use Spatie\MediaLibrary\MediaLibraryServiceProvider;
 
 abstract class TestCase extends Orchestra
@@ -242,12 +243,12 @@ abstract class TestCase extends Orchestra
             {
             }
 
-            public function report(Exception $e)
+            public function report(Throwable $e)
             {
                 // no-op
             }
 
-            public function render($request, Exception $e)
+            public function render($request, Throwable $e)
             {
                 throw $e;
             }
