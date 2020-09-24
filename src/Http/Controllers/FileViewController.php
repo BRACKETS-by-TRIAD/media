@@ -14,7 +14,7 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Response as ResponseFacade;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
-use Spatie\MediaLibrary\Models\Media as MediaModel;
+use Spatie\MediaLibrary\MediaCollections\Models\Media as MediaModel;
 
 class FileViewController extends BaseController
 {

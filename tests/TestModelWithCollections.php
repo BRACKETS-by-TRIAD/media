@@ -4,7 +4,7 @@ namespace Brackets\Media\Test;
 
 use Brackets\Media\HasMedia\AutoProcessMediaTrait;
 use Spatie\Image\Exceptions\InvalidManipulation;
-use Spatie\MediaLibrary\Models\Media;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class TestModelWithCollections extends TestModel
 {

@@ -3,7 +3,7 @@
 namespace Brackets\Media\HasMedia;
 
 use Illuminate\Support\Collection;
-use Spatie\MediaLibrary\HasMedia\HasMediaTrait as ParentHasMediaTrait;
+use Spatie\MediaLibrary\InteractsWithMedia as ParentHasMediaTrait;
 
 trait HasMediaCollectionsTrait
 {

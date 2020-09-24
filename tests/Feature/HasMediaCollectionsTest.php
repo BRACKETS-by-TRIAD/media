@@ -7,7 +7,7 @@ use Brackets\Media\Exceptions\FileCannotBeAdded\TooManyFiles;
 
 use Brackets\Media\Test\TestCase;
 use Illuminate\Http\Request;
-use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\MimeTypeNotAllowed;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\MimeTypeNotAllowed;
 
 class HasMediaCollectionsTest extends TestCase
 {

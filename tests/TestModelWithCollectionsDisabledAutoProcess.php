@@ -3,7 +3,7 @@
 namespace Brackets\Media\Test;
 
 use Spatie\Image\Exceptions\InvalidManipulation;
-use Spatie\MediaLibrary\Models\Media;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class TestModelWithCollectionsDisabledAutoProcess extends TestModel
 {

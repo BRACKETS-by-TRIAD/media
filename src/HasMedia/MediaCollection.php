@@ -2,7 +2,7 @@
 
 namespace Brackets\Media\HasMedia;
 
-use Spatie\MediaLibrary\MediaCollection\MediaCollection as ParentMediaCollection;
+use Spatie\MediaLibrary\MediaCollections\MediaCollection as ParentMediaCollection;
 
 class MediaCollection extends ParentMediaCollection
 {
