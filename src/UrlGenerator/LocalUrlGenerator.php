@@ -2,13 +2,11 @@
 
 namespace Brackets\Media\UrlGenerator;
 
-use Spatie\MediaLibrary\Exceptions\UrlCannotBeDetermined;
-use Spatie\MediaLibrary\UrlGenerator\LocalUrlGenerator as SpatieLocalUrlGenerator;
+use Spatie\MediaLibrary\Support\UrlGenerator\DefaultUrlGenerator as SpatieUrlGenerator;
 
-class LocalUrlGenerator extends SpatieLocalUrlGenerator
+class LocalUrlGenerator extends SpatieUrlGenerator
 {
     /**
-     * @throws UrlCannotBeDetermined
      * @return string
      */
     public function getUrl(): string
@@ -20,5 +18,14 @@ class LocalUrlGenerator extends SpatieLocalUrlGenerator
         } else {
             return parent::getUrl();
         }
+    }
+
+    protected function makeCompatibleForNonUnixHosts(string $url): string
+    {
+        if (DIRECTORY_SEPARATOR != '/') {
+            $url = str_replace(DIRECTORY_SEPARATOR, '/', $url);
+        }
+
+        return $url;
     }
 }
