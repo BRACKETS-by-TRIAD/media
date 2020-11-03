@@ -2,7 +2,7 @@
 
 namespace Brackets\Media\Exceptions\FileCannotBeAdded;
 
-use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileCannotBeAdded;
 
 class TooManyFiles extends FileCannotBeAdded
 {

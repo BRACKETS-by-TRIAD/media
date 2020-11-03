@@ -2,7 +2,7 @@
 
 namespace Brackets\Media\HasMedia;
 
-use Spatie\MediaLibrary\Conversion\ConversionCollection;
+use Spatie\MediaLibrary\Conversions\ConversionCollection;
 
 /**
  * @property-read boolean $autoProcessMedia
