@@ -84,7 +84,7 @@ trait ProcessMediaTrait
                 }
             }
         } elseif (isset($inputMedium['action']) && $inputMedium['action'] === 'add') {
-            $mediumFileFullPath = Storage::disk('uploads')->getDriver()->getAdapter()->applyPathPrefix($inputMedium['path']);
+            $mediumFileFullPath = Storage::disk('uploads')->path($inputMedium['path']);
 
             $this->addMedia($mediumFileFullPath)
                 ->withCustomProperties($inputMedium['meta_data'])
@@ -104,7 +104,7 @@ trait ProcessMediaTrait
         $this->validateCollectionMediaCount($inputMediaForMediaCollection, $mediaCollection);
         $inputMediaForMediaCollection->each(function ($inputMedium) use ($mediaCollection) {
             if ($inputMedium['action'] === 'add') {
-                $mediumFileFullPath = Storage::disk('uploads')->getDriver()->getAdapter()->applyPathPrefix($inputMedium['path']);
+                $mediumFileFullPath = Storage::disk('uploads')->path($inputMedium['path']);
                 $this->validateTypeOfFile($mediumFileFullPath, $mediaCollection);
                 $this->validateSize($mediumFileFullPath, $mediaCollection);
             }
