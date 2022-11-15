@@ -34,6 +34,7 @@ class MediaCollection extends ParentMediaCollection
         parent::__construct($name);
 
         $this->diskName = config('media-collections.public_disk', 'media');
+        $this->maxFileSize = config('media-library.max_file_size', 1024*1024*10);
     }
 
 
