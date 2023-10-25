@@ -157,9 +157,9 @@ abstract class TestCase extends Orchestra
 
         TestModel::create(['name' => 'test']);
 
-        include_once 'vendor/spatie/laravel-medialibrary/database/migrations/create_media_table.php.stub';
+        $migration = include 'vendor/spatie/laravel-medialibrary/database/migrations/create_media_table.php.stub';
 
-        (new \CreateMediaTable())->up();
+        (new $migration)->up();
     }
 
     // FIXME what is this method for?
