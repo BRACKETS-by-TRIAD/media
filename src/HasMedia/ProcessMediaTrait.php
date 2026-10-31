@@ -3,6 +3,7 @@
 namespace Brackets\Media\HasMedia;
 
 use Brackets\Media\Exceptions\FileCannotBeAdded\FileIsTooBig;
+use Brackets\Media\Exceptions\FileCannotBeAdded\InvalidUploadPath;
 use Brackets\Media\Exceptions\FileCannotBeAdded\TooManyFiles;
 use Illuminate\Http\File;
 use Illuminate\Support\Collection;
@@ -10,7 +11,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileCannotBeAdded;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use Spatie\MediaLibrary\MediaCollections\Models\Media as MediaModel;
 
 /**
  * @property-read boolean $autoProcessMedia
@@ -75,21 +75,75 @@ trait ProcessMediaTrait
     public function processMedium(array $inputMedium, MediaCollection $mediaCollection): void
     {
         if (isset($inputMedium['id']) && $inputMedium['id']) {
-            if ($medium = app(MediaModel::class)->find($inputMedium['id'])) {
+            // Only media that already belongs to this model and this collection can be edited or deleted here,
+            // a bare id must not be able to reach media of other models.
+            if ($medium = $this->findOwnMedium($inputMedium['id'], $mediaCollection)) {
                 if (isset($inputMedium['action']) && $inputMedium['action'] === 'delete') {
                     $medium->delete();
                 } else {
-                    $medium->custom_properties = $inputMedium['meta_data'];
+                    $medium->custom_properties = $inputMedium['meta_data'] ?? [];
                     $medium->save();
                 }
             }
         } elseif (isset($inputMedium['action']) && $inputMedium['action'] === 'add') {
-            $mediumFileFullPath = Storage::disk('uploads')->path($inputMedium['path']);
+            $mediumFileFullPath = $this->resolveUploadedFilePath($inputMedium['path'] ?? null);
 
             $this->addMedia($mediumFileFullPath)
-                ->withCustomProperties($inputMedium['meta_data'])
+                ->withCustomProperties($inputMedium['meta_data'] ?? [])
                 ->toMediaCollection($mediaCollection->getName(), $mediaCollection->getDisk());
         }
+    }
+
+    /**
+     * Find a medium by id, limited to the media attached to this model in the given collection
+     *
+     * @param mixed $id
+     * @param MediaCollection $mediaCollection
+     * @return Media|null
+     */
+    protected function findOwnMedium($id, MediaCollection $mediaCollection): ?Media
+    {
+        if (! $this->exists) {
+            return null;
+        }
+
+        return $this->media()
+            ->where('collection_name', $mediaCollection->getName())
+            ->find($id);
+    }
+
+    /**
+     * Resolve a path submitted by the client to an absolute path of a file inside the "uploads" disk.
+     *
+     * The submitted path is user input, so it is canonicalized (realpath, which also resolves symlinks)
+     * and rejected unless it points to a regular file that stays inside the root of the uploads disk.
+     *
+     * @param mixed $path
+     * @return string
+     * @throws InvalidUploadPath
+     */
+    protected function resolveUploadedFilePath($path): string
+    {
+        if (! is_string($path) || $path === '' || str_contains($path, "\0")) {
+            throw InvalidUploadPath::create(is_scalar($path) ? (string) $path : gettype($path));
+        }
+
+        $disk = Storage::disk('uploads');
+
+        $root = realpath($disk->path(''));
+        $fullPath = realpath($disk->path($path));
+
+        if ($root === false || $fullPath === false || ! is_file($fullPath)) {
+            throw InvalidUploadPath::create($path);
+        }
+
+        $root = rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+
+        if (! str_starts_with($fullPath, $root)) {
+            throw InvalidUploadPath::create($path);
+        }
+
+        return $fullPath;
     }
 
     /**
@@ -103,8 +157,8 @@ trait ProcessMediaTrait
     {
         $this->validateCollectionMediaCount($inputMediaForMediaCollection, $mediaCollection);
         $inputMediaForMediaCollection->each(function ($inputMedium) use ($mediaCollection) {
-            if ($inputMedium['action'] === 'add') {
-                $mediumFileFullPath = Storage::disk('uploads')->path($inputMedium['path']);
+            if (isset($inputMedium['action']) && $inputMedium['action'] === 'add') {
+                $mediumFileFullPath = $this->resolveUploadedFilePath($inputMedium['path'] ?? null);
                 $this->validateTypeOfFile($mediumFileFullPath, $mediaCollection);
                 $this->validateSize($mediumFileFullPath, $mediaCollection);
             }
@@ -125,10 +179,10 @@ trait ProcessMediaTrait
         if ($mediaCollection->getMaxNumberOfFiles()) {
             $alreadyUploadedMediaCount = $this->getMedia($mediaCollection->getName())->count();
             $forAddMediaCount = $inputMediaForMediaCollection->filter(static function ($medium) {
-                return $medium['action'] === 'add';
+                return isset($medium['action']) && $medium['action'] === 'add';
             })->count();
             $forDeleteMediaCount = $inputMediaForMediaCollection->filter(static function ($medium) {
-                return $medium['action'] === 'delete' ? 1 : 0;
+                return isset($medium['action']) && $medium['action'] === 'delete';
             })->count();
             $afterUploadCount = ($forAddMediaCount + $alreadyUploadedMediaCount - $forDeleteMediaCount);
 

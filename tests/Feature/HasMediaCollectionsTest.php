@@ -3,6 +3,7 @@
 namespace Brackets\Media\Test\Feature;
 
 use Brackets\Media\Exceptions\FileCannotBeAdded\FileIsTooBig;
+use Brackets\Media\Exceptions\FileCannotBeAdded\InvalidUploadPath;
 use Brackets\Media\Exceptions\FileCannotBeAdded\TooManyFiles;
 
 use Brackets\Media\Test\TestCase;
@@ -651,6 +652,146 @@ class HasMediaCollectionsTest extends TestCase
         //collection with mixed mimetypes is not image
         $this->testModelWithCollections->addMediaCollection('mixed_mime_type')->accepts('image/jpeg', 'application/pdf', 'application/msword');
         $this->assertCount(2, $this->testModelWithCollections->getMediaCollections()->filter->isImage());
+    }
+
+    /** @test */
+    public function file_outside_of_the_uploads_disk_cannot_be_added()
+    {
+        // a file that exists on the server but outside of the uploads disk root
+        file_put_contents($this->getTestFilesDirectory('secret.txt'), 'APP_KEY=secret');
+        $this->assertFileExists($this->getUploadsDirectory('../app/secret.txt'));
+
+        $this->testModel->addMediaCollection('documents');
+
+        try {
+            $this->testModel->processMedia(collect([
+                'documents' => [
+                    [
+                        'collection_name' => 'documents',
+                        'path' => '../app/secret.txt',
+                        'action' => 'add',
+                        'meta_data' => ['name' => 'secret'],
+                    ],
+                ],
+            ]));
+            $this->fail('InvalidUploadPath was not thrown');
+        } catch (InvalidUploadPath $e) {
+            $this->addToAssertionCount(1);
+        }
+
+        $this->assertCount(0, $this->testModel->fresh()->getMedia('documents'));
+    }
+
+    /** @test */
+    public function not_existing_or_invalid_upload_path_cannot_be_added()
+    {
+        $this->testModel->addMediaCollection('documents');
+
+        foreach (['missing.pdf', '', null, "test.pdf\0.jpg", '.'] as $path) {
+            try {
+                $this->testModel->processMedia(collect([
+                    'documents' => [
+                        [
+                            'collection_name' => 'documents',
+                            'path' => $path,
+                            'action' => 'add',
+                            'meta_data' => ['name' => 'test'],
+                        ],
+                    ],
+                ]));
+                $this->fail('InvalidUploadPath was not thrown for path ' . var_export($path, true));
+            } catch (InvalidUploadPath $e) {
+                $this->addToAssertionCount(1);
+            }
+        }
+
+        $this->assertCount(0, $this->testModel->fresh()->getMedia('documents'));
+    }
+
+    /** @test */
+    public function media_of_another_model_cannot_be_edited_or_deleted_by_id()
+    {
+        // victim: a different model owning a medium
+        $victimMedium = $this->testModelWithCollections
+            ->addMedia($this->getUploadsDirectory('test.pdf'))
+            ->preservingOriginal()
+            ->withCustomProperties(['name' => 'original'])
+            ->toMediaCollection('documents');
+
+        // attacker: another model that only knows the victim's medium id
+        $this->testModel->addMediaCollection('documents');
+
+        $this->testModel->processMedia(collect([
+            'documents' => [
+                [
+                    'id' => $victimMedium->id,
+                    'collection_name' => 'documents',
+                    'action' => 'edit',
+                    'meta_data' => ['name' => 'tampered'],
+                ],
+            ],
+        ]));
+
+        $this->assertSame('original', $victimMedium->fresh()->custom_properties['name']);
+
+        $this->testModel->processMedia(collect([
+            'documents' => [
+                [
+                    'id' => $victimMedium->id,
+                    'collection_name' => 'documents',
+                    'action' => 'delete',
+                ],
+            ],
+        ]));
+
+        $this->assertNotNull($victimMedium->fresh());
+        $this->assertCount(1, $this->testModelWithCollections->fresh()->getMedia('documents'));
+    }
+
+    /** @test */
+    public function own_media_can_still_be_edited_and_deleted_by_id()
+    {
+        $this->testModel->addMediaCollection('documents');
+
+        $this->testModel->processMedia(collect([
+            'documents' => [
+                [
+                    'collection_name' => 'documents',
+                    'path' => 'test.pdf',
+                    'action' => 'add',
+                    'meta_data' => ['name' => 'original'],
+                ],
+            ],
+        ]));
+
+        $medium = $this->testModel->fresh()->getMedia('documents')->first();
+        $this->assertSame('original', $medium->custom_properties['name']);
+
+        $this->testModel->processMedia(collect([
+            'documents' => [
+                [
+                    'id' => $medium->id,
+                    'collection_name' => 'documents',
+                    'action' => 'edit',
+                    'meta_data' => ['name' => 'renamed'],
+                ],
+            ],
+        ]));
+
+        $this->assertSame('renamed', $medium->fresh()->custom_properties['name']);
+
+        $this->testModel->processMedia(collect([
+            'documents' => [
+                [
+                    'id' => $medium->id,
+                    'collection_name' => 'documents',
+                    'action' => 'delete',
+                ],
+            ],
+        ]));
+
+        $this->assertNull($medium->fresh());
+        $this->assertCount(0, $this->testModel->fresh()->getMedia('documents'));
     }
 
     private function getRequest($data)
